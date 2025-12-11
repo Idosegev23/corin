@@ -15,13 +15,26 @@ import {
   ChefHat
 } from 'lucide-react';
 import { products, posts, categories, couponCodes, recipes } from '@/data/corrin-data';
-import { Marquee } from '@/components/Marquee';
-import GlassSurface from '@/components/GlassSurface';
 
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+}
+
+// Seamless Marquee Component
+function SeamlessMarquee({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`overflow-hidden ${className}`}>
+      <div 
+        className="flex animate-marquee"
+        style={{ '--duration': '30s' } as React.CSSProperties}
+      >
+        {children}
+        {children}
+      </div>
+    </div>
+  );
 }
 
 export default function Home() {
@@ -123,54 +136,31 @@ export default function Home() {
     'מה יש לך בטיפוח?',
   ];
 
+  const pastelColors = [
+    '#FFECD2', // peach
+    '#FFE4E6', // pink
+    '#E8E0F0', // lavender
+    '#D4EDDA', // mint
+    '#D6EAF8', // sky
+    '#FFF8E7', // cream
+  ];
+
+  const openInstagramPost = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <main className="min-h-screen flex flex-col">
-      {/* Products Marquee - Always visible at top */}
-      <div className="marquee-container py-3 overflow-hidden">
-        <Marquee pauseOnHover className="[--duration:20s]" repeat={4}>
-          {products.map((product) => (
-            <a
-              key={product.id}
-              href={product.shortLink || product.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 px-4 py-2 mx-2 rounded-full transition-all hover:scale-105"
-              style={{
-                background: 'rgba(255,255,255,0.9)',
-                border: '1px solid rgba(247, 127, 63, 0.2)',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
-              }}
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
-              />
-              <span className="text-sm font-medium text-gray-800 whitespace-nowrap">{product.name}</span>
-              {product.couponCode && (
-                <span className="text-xs bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full font-bold shadow-sm">
-                  {product.couponCode}
-                </span>
-              )}
-            </a>
-          ))}
-        </Marquee>
-      </div>
-
       {/* Header */}
       <header className="sticky top-0 z-50 glass px-4 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <GlassSurface
-              width={56}
-              height={56}
-              borderRadius={28}
-              brightness={95}
-              opacity={0.95}
-              className="flex-shrink-0"
+            <div 
+              className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ background: pastelColors[0] }}
             >
-              <span className="text-2xl font-bold text-orange-500">C</span>
-            </GlassSurface>
+              <span className="text-2xl font-bold" style={{ color: '#F77F3F' }}>C</span>
+            </div>
             <div>
               <h1 className="font-bold text-xl text-gray-800">Corrin Gideon</h1>
               <p className="text-sm text-gray-500">העוזרת האישית שלך</p>
@@ -181,7 +171,7 @@ export default function Home() {
               onClick={() => setActiveTab('chat')}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
                 activeTab === 'chat'
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md'
+                  ? 'bg-[#F77F3F] text-white shadow-md'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -191,7 +181,7 @@ export default function Home() {
               onClick={() => setActiveTab('search')}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
                 activeTab === 'search'
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md'
+                  ? 'bg-[#F77F3F] text-white shadow-md'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -215,27 +205,54 @@ export default function Home() {
               {/* Chat Messages */}
               <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
                 {messages.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center px-4">
+                  <div className="flex flex-col items-center justify-center text-center px-4">
+                    {/* Marquee inside the chat area */}
+                    <div className="w-full mb-8 rounded-2xl overflow-hidden" style={{ background: pastelColors[0] }}>
+                      <SeamlessMarquee className="py-3">
+                        <div className="flex gap-4 px-2">
+                          {products.map((product) => (
+                            <a
+                              key={product.id}
+                              href={product.shortLink || product.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="marquee-item flex items-center gap-3 px-4 py-2.5 rounded-full whitespace-nowrap"
+                            >
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                className="w-9 h-9 rounded-full object-cover border-2 border-white"
+                              />
+                              <span className="text-sm font-medium text-gray-700">{product.name}</span>
+                              {product.couponCode && (
+                                <span 
+                                  className="text-xs text-white px-2.5 py-1 rounded-full font-bold"
+                                  style={{ background: '#F77F3F' }}
+                                >
+                                  {product.couponCode}
+                                </span>
+                              )}
+                            </a>
+                          ))}
+                        </div>
+                      </SeamlessMarquee>
+                    </div>
+
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: 'spring', bounce: 0.5 }}
+                      className="w-24 h-24 rounded-full flex items-center justify-center mb-6 animate-pulse-glow"
+                      style={{ background: pastelColors[1] }}
                     >
-                      <GlassSurface
-                        width={100}
-                        height={100}
-                        borderRadius={50}
-                        brightness={98}
-                        opacity={0.95}
-                        className="mb-6 animate-pulse-glow"
-                      >
-                        <Sparkles className="w-12 h-12 text-orange-500" />
-                      </GlassSurface>
+                      <Sparkles className="w-12 h-12" style={{ color: '#F77F3F' }} />
                     </motion.div>
+                    
                     <h2 className="text-2xl font-bold mb-3 text-gray-800">היי! אני קורין</h2>
                     <p className="text-gray-500 mb-8 max-w-sm text-lg">
                       שאלי אותי הכל על המוצרים שלי, קודי קופון, מתכונים ומה שתרצי!
                     </p>
+                    
                     <div className="flex flex-wrap gap-3 justify-center max-w-lg">
                       {suggestedQuestions.map((q, i) => (
                         <motion.button
@@ -247,7 +264,11 @@ export default function Home() {
                             setInputValue(q);
                             inputRef.current?.focus();
                           }}
-                          className="px-4 py-2.5 text-sm bg-white rounded-full border border-gray-200 hover:border-orange-400 hover:shadow-md transition-all text-gray-700"
+                          className="px-4 py-2.5 text-sm rounded-full border transition-all text-gray-700 hover:shadow-md"
+                          style={{ 
+                            background: pastelColors[i % pastelColors.length],
+                            borderColor: 'rgba(0,0,0,0.05)'
+                          }}
                         >
                           {q}
                         </motion.button>
@@ -282,14 +303,14 @@ export default function Home() {
                                       href={href}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-orange-500 hover:text-orange-600 underline inline-flex items-center gap-1"
+                                      className="text-[#F77F3F] hover:text-[#FF6B35] underline inline-flex items-center gap-1"
                                     >
                                       {children}
                                       <ExternalLink className="w-3 h-3" />
                                     </a>
                                   ),
                                   strong: ({ children }) => (
-                                    <strong className="font-bold text-orange-600">{children}</strong>
+                                    <strong className="font-bold text-[#FF6B35]">{children}</strong>
                                   ),
                                   p: ({ children }) => (
                                     <p className="mb-2 last:mb-0">{children}</p>
@@ -304,7 +325,7 @@ export default function Home() {
                                     <li className="text-sm">{children}</li>
                                   ),
                                   code: ({ children }) => (
-                                    <code className="bg-orange-50 px-2 py-0.5 rounded font-mono text-orange-600">
+                                    <code className="px-2 py-0.5 rounded font-mono text-[#FF6B35]" style={{ background: '#FFECD2' }}>
                                       {children}
                                     </code>
                                   ),
@@ -389,15 +410,20 @@ export default function Home() {
                     />
                   </div>
                   
-                  {/* Categories - Bigger */}
+                  {/* Categories - Bigger with pastel colors */}
                   <div className="flex gap-3 mt-4 overflow-x-auto pb-2 scrollbar-hide">
-                    {categories.map((cat) => (
+                    {categories.map((cat, index) => (
                       <button
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
-                        className={`category-pill px-5 py-3 rounded-full text-base whitespace-nowrap flex items-center gap-2 font-medium ${
-                          selectedCategory === cat.id ? 'active' : ''
+                        className={`px-5 py-3 rounded-full text-base whitespace-nowrap flex items-center gap-2 font-medium transition-all border ${
+                          selectedCategory === cat.id 
+                            ? 'bg-[#F77F3F] text-white border-[#F77F3F]' 
+                            : 'text-gray-700 border-transparent hover:shadow-sm'
                         }`}
+                        style={selectedCategory !== cat.id ? { 
+                          background: pastelColors[index % pastelColors.length] 
+                        } : {}}
                       >
                         <span className="text-xl">{cat.icon}</span>
                         <span>{cat.name}</span>
@@ -418,24 +444,25 @@ export default function Home() {
                         קודי קופון
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
-                        {couponCodes.slice(0, 6).map((coupon) => (
+                        {couponCodes.slice(0, 6).map((coupon, index) => (
                           <motion.div
                             key={coupon.code}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleCopyCode(coupon.code)}
-                            className="product-card rounded-2xl p-4 cursor-pointer"
+                            className="rounded-2xl p-4 cursor-pointer transition-all border border-transparent hover:border-[#F77F3F]"
+                            style={{ background: pastelColors[index % pastelColors.length] }}
                           >
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-sm text-gray-500">{coupon.brand}</span>
+                              <span className="text-sm text-gray-600">{coupon.brand}</span>
                               {copiedCode === coupon.code ? (
-                                <Check className="w-5 h-5 text-green-500" />
+                                <Check className="w-5 h-5 text-green-600" />
                               ) : (
                                 <Copy className="w-5 h-5 text-gray-400" />
                               )}
                             </div>
-                            <p className="font-mono font-bold text-lg text-orange-500">{coupon.code}</p>
-                            <p className="text-sm text-gray-500 mt-1">{coupon.description}</p>
+                            <p className="font-mono font-bold text-lg text-[#F77F3F]">{coupon.code}</p>
+                            <p className="text-sm text-gray-600 mt-1">{coupon.description}</p>
                           </motion.div>
                         ))}
                       </div>
@@ -446,7 +473,7 @@ export default function Home() {
                   {(selectedCategory === 'all' || selectedCategory === 'recipes' || searchQuery.includes('מתכון')) && (
                     <div className="mb-8">
                       <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
-                        <ChefHat className="w-6 h-6 text-orange-500" />
+                        <ChefHat className="w-6 h-6 text-[#F77F3F]" />
                         מתכונים
                       </h3>
                       <div className="space-y-3">
@@ -459,7 +486,8 @@ export default function Home() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className="product-card rounded-2xl overflow-hidden flex gap-4"
+                            className="rounded-2xl overflow-hidden flex gap-4 border border-transparent hover:border-[#F77F3F] transition-all"
+                            style={{ background: pastelColors[index % pastelColors.length] }}
                           >
                             <div className="w-28 h-28 flex-shrink-0">
                               <img
@@ -469,11 +497,11 @@ export default function Home() {
                               />
                             </div>
                             <div className="p-4 flex-1">
-                              <h4 className="font-bold text-base text-orange-600">{recipe.name}</h4>
-                              <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                              <h4 className="font-bold text-base text-[#F77F3F]">{recipe.name}</h4>
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                                 {recipe.description}
                               </p>
-                              <div className="flex items-center gap-1 mt-3 text-sm text-orange-500">
+                              <div className="flex items-center gap-1 mt-3 text-sm text-[#F77F3F]">
                                 <ExternalLink className="w-4 h-4" />
                                 <span>לצפייה במתכון</span>
                               </div>
@@ -486,7 +514,7 @@ export default function Home() {
 
                   {/* Products */}
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
-                    <ShoppingBag className="w-6 h-6 text-orange-500" />
+                    <ShoppingBag className="w-6 h-6 text-[#F77F3F]" />
                     מוצרים
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
@@ -508,16 +536,19 @@ export default function Home() {
                             className="w-full h-full object-cover"
                           />
                           {product.couponCode && (
-                            <div className="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md">
+                            <div 
+                              className="absolute top-3 right-3 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md"
+                              style={{ background: '#F77F3F' }}
+                            >
                               קופון
                             </div>
                           )}
                         </div>
                         <div className="p-4">
-                          <p className="text-sm text-orange-500 font-medium mb-1">{product.brand}</p>
+                          <p className="text-sm text-[#F77F3F] font-medium mb-1">{product.brand}</p>
                           <h4 className="font-medium text-base line-clamp-2 text-gray-800">{product.name}</h4>
                           {product.couponCode && (
-                            <p className="text-sm text-orange-600 mt-2 font-mono font-bold">
+                            <p className="text-sm text-[#FF6B35] mt-2 font-mono font-bold">
                               {product.couponCode}
                             </p>
                           )}
@@ -537,30 +568,34 @@ export default function Home() {
                   </h3>
                   <div className="grid grid-cols-3 gap-3">
                     {posts.map((post, index) => (
-                      <motion.a
+                      <motion.div
                         key={post.id}
-                        href={post.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.05 }}
-                        className="aspect-square relative rounded-2xl overflow-hidden group shadow-sm"
+                        onClick={() => openInstagramPost(post.url)}
+                        className="aspect-square relative rounded-2xl overflow-hidden group shadow-sm cursor-pointer"
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && openInstagramPost(post.url)}
                       >
                         <img
                           src={post.image}
                           alt={post.caption}
                           className="w-full h-full object-cover transition-transform group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
                           <p className="text-xs text-white line-clamp-2">{post.caption}</p>
                         </div>
                         {post.brand && (
-                          <div className="absolute top-2 right-2 bg-orange-500 text-white text-[10px] px-2 py-1 rounded-full font-medium">
+                          <div 
+                            className="absolute top-2 right-2 text-white text-[10px] px-2 py-1 rounded-full font-medium"
+                            style={{ background: '#F77F3F' }}
+                          >
                             {post.brand}
                           </div>
                         )}
-                      </motion.a>
+                      </motion.div>
                     ))}
                   </div>
                 </div>
