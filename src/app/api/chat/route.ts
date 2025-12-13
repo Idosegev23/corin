@@ -68,18 +68,18 @@ async function saveToSupabase(
   }
 }
 
-// Build context with all data
+// Build context with all data including links
 function buildContext() {
   const recipesContext = recipes.map(r => 
-    `**${r.name}**: ${r.description}\nמצרכים: ${r.ingredients.join(', ')}\nהכנה: ${r.instructions}`
+    `**${r.name}**: ${r.description}\nמצרכים: ${r.ingredients.join(', ')}\nלינק: ${r.url}`
   ).join('\n\n');
 
   const couponsContext = couponCodes.map(c => 
     `${c.brand}: קוד "${c.code}" - ${c.description}`
   ).join('\n');
 
-  const productsContext = products.slice(0, 10).map(p => 
-    `${p.name} (${p.brand})${p.couponCode ? ` - קופון: ${p.couponCode}` : ''}`
+  const productsContext = products.map(p => 
+    `${p.name} (${p.brand})${p.couponCode ? ` - קופון: ${p.couponCode}` : ''} - לינק: ${p.shortLink || p.link}`
   ).join('\n');
 
   return `
@@ -139,15 +139,22 @@ export async function POST(req: NextRequest) {
       assistant_id: ASSISTANT_ID,
       additional_instructions: `
 אתה העוזר החכם של קורין גדעון - יוצרת תוכן בתחום האוכל והלייפסטייל.
-התפקיד שלך:
+
+## התפקיד שלך:
 1. לעזור עם מתכונים - להסביר שלבים, להציע תחליפים למרכיבים, לתת טיפים
 2. להמליץ על מוצרים וקופונים רלוונטיים
 3. להיות חם, ידידותי ומועיל - כמו שקורין עצמה הייתה עונה
 
-כשמישהו שואל על מתכון:
-- תן את כל הפרטים הרלוונטיים
-- הצע טיפים ושיפורים
-- אם שואלים על תחליף למרכיב - תן אפשרויות
+## כללים חשובים לגבי לינקים:
+- כשאתה מציע מוצר, מתכון או קופון - תמיד כלול את הלינק המדויק מהקונטקסט
+- אל תמציא לינקים! השתמש רק בלינקים שקיבלת במידע הרלוונטי
+- הצג לינקים בפורמט markdown: [שם הלינק](כתובת)
+
+## פורמט תשובה:
+- השתמש ב-**טקסט מודגש** לדברים חשובים
+- השתמש ברשימות ממוספרות להוראות הכנה
+- הצג קופונים בצורה ברורה: "קוד הקופון: XXXXX"
+- הוסף טיפים עם סימון מיוחד: "💡 טיפ: ..."
 
 ענה תמיד בעברית, בצורה חמה ומזמינה.
       `.trim(),

@@ -658,28 +658,75 @@ export default function Home() {
                                         href={href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-[var(--accent)] hover:underline"
+                                        className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-md text-xs font-medium transition-colors"
                                       >
                                         {children}
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
                                       </a>
                                     ),
-                                    strong: ({ children }) => (
-                                      <strong className="font-semibold">{children}</strong>
-                                    ),
-                                    p: ({ children }) => (
-                                      <p className="mb-2 last:mb-0">{children}</p>
-                                    ),
+                                    strong: ({ children }) => {
+                                      const text = String(children);
+                                      // Check if it's a coupon code pattern
+                                      if (text.match(/^[A-Z0-9]{3,15}$/i)) {
+                                        return (
+                                          <span 
+                                            className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded font-mono text-xs font-bold cursor-pointer hover:bg-green-100 transition-colors"
+                                            onClick={() => {
+                                              navigator.clipboard.writeText(text);
+                                            }}
+                                            title="לחץ להעתקה"
+                                          >
+                                            {children}
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
+                                          </span>
+                                        );
+                                      }
+                                      return <strong className="font-semibold text-gray-900">{children}</strong>;
+                                    },
+                                    p: ({ children }) => {
+                                      const text = String(children);
+                                      // Check if it's a tip line
+                                      if (text.startsWith('💡')) {
+                                        return (
+                                          <div className="flex gap-2 p-2 my-2 bg-amber-50 border-r-2 border-amber-400 rounded-lg">
+                                            <span className="text-base">💡</span>
+                                            <p className="text-sm text-amber-800">{text.replace('💡', '').trim()}</p>
+                                          </div>
+                                        );
+                                      }
+                                      return <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>;
+                                    },
                                     ul: ({ children }) => (
-                                      <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>
+                                      <ul className="mb-3 space-y-1.5 pr-1">{children}</ul>
                                     ),
                                     ol: ({ children }) => (
-                                      <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>
+                                      <ol className="mb-3 space-y-2 pr-1 counter-reset-item">{children}</ol>
                                     ),
-                                    li: ({ children }) => <li className="text-sm">{children}</li>,
+                                    li: ({ children }) => (
+                                      <li className="flex items-start gap-2 text-sm">
+                                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-indigo-400 mt-2" />
+                                        <span className="flex-1">{children}</span>
+                                      </li>
+                                    ),
                                     code: ({ children }) => (
-                                      <code className="px-1.5 py-0.5 rounded text-sm bg-gray-100 font-mono">
+                                      <code className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-800 font-mono border border-gray-200">
                                         {children}
                                       </code>
+                                    ),
+                                    h2: ({ children }) => (
+                                      <h2 className="text-base font-bold text-gray-900 mt-3 mb-2 pb-1 border-b border-gray-100">{children}</h2>
+                                    ),
+                                    h3: ({ children }) => (
+                                      <h3 className="text-sm font-bold text-gray-800 mt-2 mb-1">{children}</h3>
+                                    ),
+                                    blockquote: ({ children }) => (
+                                      <blockquote className="border-r-2 border-indigo-300 pr-3 my-2 text-gray-600 italic">
+                                        {children}
+                                      </blockquote>
                                     ),
                                   }}
                                 >
