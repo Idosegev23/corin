@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { products, posts, categories, couponCodes, recipes, Recipe } from '@/data/corrin-data';
+import { Marquee } from '@/components/Marquee';
 
 interface Message {
   id: string;
@@ -173,6 +174,12 @@ export default function Home() {
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
+  const startNewChat = () => {
+    setMessages([]);
+    setThreadId(null);
+    setInputValue('');
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -284,27 +291,37 @@ export default function Home() {
               <p className="text-xs text-gray-500">מוצרים, קופונים ומתכונים</p>
             </div>
           </div>
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => setActiveTab('chat')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                activeTab === 'chat'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              צ׳אט
-            </button>
-            <button
-              onClick={() => setActiveTab('search')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                activeTab === 'search'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              חיפוש
-            </button>
+          <div className="flex items-center gap-2">
+            {messages.length > 0 && activeTab === 'chat' && (
+              <button
+                onClick={startNewChat}
+                className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all"
+              >
+                שיחה חדשה
+              </button>
+            )}
+            <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setActiveTab('chat')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  activeTab === 'chat'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                צ׳אט
+              </button>
+              <button
+                onClick={() => setActiveTab('search')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  activeTab === 'search'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                חיפוש
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -393,7 +410,7 @@ export default function Home() {
                     <p className="text-xs text-gray-400 mb-3">נסו לשאול:</p>
 
                     {/* Suggestions */}
-                    <div className="flex flex-wrap gap-2 justify-center max-w-md">
+                    <div className="flex flex-wrap gap-2 justify-center max-w-md mb-8">
                       {suggestedQuestions.map((q, i) => (
                         <button
                           key={i}
@@ -406,6 +423,29 @@ export default function Home() {
                           {q}
                         </button>
                       ))}
+                    </div>
+
+                    {/* Products Marquee */}
+                    <div className="w-full mt-4">
+                      <p className="text-xs text-gray-400 mb-3 text-center">מוצרים מומלצים</p>
+                      <div className="relative">
+                        <Marquee pauseOnHover className="[--duration:40s]">
+                          {products.slice(0, 8).map((product) => (
+                            <a
+                              key={product.id}
+                              href={product.shortLink || product.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-shrink-0 w-48 p-3 bg-white border border-gray-100 rounded-xl hover:border-gray-200 hover:shadow-sm transition-all"
+                            >
+                              <p className="font-medium text-gray-900 text-sm truncate">{product.name}</p>
+                              <p className="text-xs text-gray-500 mt-1">{product.brand}</p>
+                            </a>
+                          ))}
+                        </Marquee>
+                        <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white to-transparent" />
+                        <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent" />
+                      </div>
                     </div>
                   </div>
                 ) : (
