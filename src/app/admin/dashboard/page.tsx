@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Stats {
   chatStats: {
@@ -38,7 +39,6 @@ interface Stats {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -67,7 +67,6 @@ export default function AdminDashboard() {
       const data = await res.json();
       setStats(data);
     } catch (err) {
-      setError('שגיאה בטעינת הסטטיסטיקות');
       console.error(err);
     } finally {
       setLoading(false);
@@ -94,221 +93,235 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center" dir="rtl">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center" dir="rtl">
-        <div className="text-red-600">{error}</div>
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center" dir="rtl">
+        <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100" dir="rtl">
+    <div className="min-h-screen bg-gray-950" dir="rtl">
+      {/* Background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-900/10 via-gray-950 to-pink-900/10" />
+      
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-slate-800">
-            דשבורד ניהול - Corrin Gideon
-          </h1>
-          <div className="flex items-center gap-4">
-            <nav className="flex gap-4">
-              <Link href="/admin/dashboard" className="text-indigo-600 font-medium">
-                דשבורד
-              </Link>
-              <Link href="/admin/support" className="text-slate-600 hover:text-indigo-600 transition-colors">
-                פניות תמיכה
-              </Link>
-              <Link href="/admin/chats" className="text-slate-600 hover:text-indigo-600 transition-colors">
-                היסטוריית שיחות
-              </Link>
-            </nav>
+      <header className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur-xl border-b border-gray-800">
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl overflow-hidden">
+                <Image
+                  src="/corrin-avatar.jpg"
+                  alt="Corrin"
+                  width={36}
+                  height={36}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h1 className="font-semibold text-white text-sm">פאנל ניהול</h1>
+                <p className="text-[10px] text-gray-500">Corrin Gideon</p>
+              </div>
+            </div>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-sm text-slate-600 hover:text-red-600 transition-colors"
+              className="px-3 py-1.5 text-xs text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
             >
-              התנתקות
+              יציאה
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl shadow-sm p-6"
+      {/* Navigation Tabs */}
+      <nav className="sticky top-[57px] z-40 bg-gray-900/60 backdrop-blur-xl border-b border-gray-800">
+        <div className="flex">
+          <Link
+            href="/admin/dashboard"
+            className="flex-1 py-3 text-center text-sm font-medium text-purple-400 border-b-2 border-purple-500"
           >
-            <div className="text-sm text-slate-500 mb-1">שיחות היום</div>
-            <div className="text-3xl font-bold text-slate-800">{stats?.chatStats.today || 0}</div>
-            <div className="text-xs text-slate-400 mt-2">
-              סה״כ: {stats?.chatStats.total || 0}
-            </div>
+            דשבורד
+          </Link>
+          <Link
+            href="/admin/support"
+            className="flex-1 py-3 text-center text-sm font-medium text-gray-400 hover:text-white transition-colors"
+          >
+            פניות
+          </Link>
+          <Link
+            href="/admin/chats"
+            className="flex-1 py-3 text-center text-sm font-medium text-gray-400 hover:text-white transition-colors"
+          >
+            שיחות
+          </Link>
+        </div>
+      </nav>
+
+      <main className="relative p-4 pb-8 max-w-3xl mx-auto">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gray-900/80 backdrop-blur rounded-2xl p-4 border border-gray-800"
+          >
+            <div className="text-2xl font-bold text-white">{stats?.chatStats.today || 0}</div>
+            <div className="text-xs text-gray-400 mt-1">שיחות היום</div>
+            <div className="text-[10px] text-gray-600 mt-2">סה״כ {stats?.chatStats.total || 0}</div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="bg-gray-900/80 backdrop-blur rounded-2xl p-4 border border-gray-800"
+          >
+            <div className="text-2xl font-bold text-white">{stats?.chatStats.totalMessages || 0}</div>
+            <div className="text-xs text-gray-400 mt-1">הודעות</div>
+            <div className="text-[10px] text-gray-600 mt-2">שבוע: {stats?.chatStats.week || 0}</div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl shadow-sm p-6"
+            className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 backdrop-blur rounded-2xl p-4 border border-orange-500/20"
           >
-            <div className="text-sm text-slate-500 mb-1">הודעות סה״כ</div>
-            <div className="text-3xl font-bold text-slate-800">{stats?.chatStats.totalMessages || 0}</div>
-            <div className="text-xs text-slate-400 mt-2">
-              שבוע אחרון: {stats?.chatStats.week || 0} שיחות
-            </div>
+            <div className="text-2xl font-bold text-orange-400">{stats?.supportStats.open || 0}</div>
+            <div className="text-xs text-gray-400 mt-1">פניות פתוחות</div>
+            <div className="text-[10px] text-gray-600 mt-2">טופלו: {stats?.supportStats.resolved || 0}</div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-2xl shadow-sm p-6"
+            transition={{ delay: 0.15 }}
+            className="bg-gray-900/80 backdrop-blur rounded-2xl p-4 border border-gray-800"
           >
-            <div className="text-sm text-slate-500 mb-1">פניות פתוחות</div>
-            <div className="text-3xl font-bold text-orange-500">{stats?.supportStats.open || 0}</div>
-            <div className="text-xs text-slate-400 mt-2">
-              טופלו: {stats?.supportStats.resolved || 0}
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl shadow-sm p-6"
-          >
-            <div className="text-sm text-slate-500 mb-1">פניות היום</div>
-            <div className="text-3xl font-bold text-slate-800">{stats?.supportStats.today || 0}</div>
-            <div className="text-xs text-slate-400 mt-2">
-              סה״כ: {stats?.supportStats.total || 0}
-            </div>
+            <div className="text-2xl font-bold text-white">{stats?.supportStats.today || 0}</div>
+            <div className="text-xs text-gray-400 mt-1">פניות היום</div>
+            <div className="text-[10px] text-gray-600 mt-2">סה״כ {stats?.supportStats.total || 0}</div>
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Brand Breakdown */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white rounded-2xl shadow-sm p-6"
-          >
-            <h2 className="text-lg font-semibold text-slate-800 mb-4">פניות לפי מותג</h2>
-            {stats?.brandCounts && Object.keys(stats.brandCounts).length > 0 ? (
-              <div className="space-y-3">
-                {Object.entries(stats.brandCounts)
-                  .sort(([, a], [, b]) => b - a)
-                  .map(([brand, count]) => (
-                    <div key={brand} className="flex items-center justify-between">
-                      <span className="text-slate-700">{brand}</span>
-                      <div className="flex items-center gap-3">
-                        <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-indigo-500 rounded-full"
-                            style={{
-                              width: `${(count / Math.max(...Object.values(stats.brandCounts))) * 100}%`,
-                            }}
-                          />
-                        </div>
-                        <span className="text-sm font-medium text-slate-600 w-8 text-left">
-                          {count}
-                        </span>
+        {/* Brand Breakdown */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-gray-900/80 backdrop-blur rounded-2xl p-4 border border-gray-800 mb-4"
+        >
+          <h2 className="text-sm font-semibold text-white mb-4">פניות לפי מותג</h2>
+          {stats?.brandCounts && Object.keys(stats.brandCounts).length > 0 ? (
+            <div className="space-y-3">
+              {Object.entries(stats.brandCounts)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 5)
+                .map(([brand, count]) => (
+                  <div key={brand} className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 text-xs font-bold">
+                      {brand.charAt(0)}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-gray-300">{brand}</span>
+                        <span className="text-xs font-medium text-white">{count}</span>
                       </div>
-                    </div>
-                  ))}
-              </div>
-            ) : (
-              <p className="text-slate-400 text-center py-8">אין עדיין פניות</p>
-            )}
-          </motion.div>
-
-          {/* Recent Support Requests */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-white rounded-2xl shadow-sm p-6"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-800">פניות אחרונות</h2>
-              <Link href="/admin/support" className="text-sm text-indigo-600 hover:text-indigo-700">
-                הצג הכל
-              </Link>
-            </div>
-            {stats?.recentSupport && stats.recentSupport.length > 0 ? (
-              <div className="space-y-3">
-                {stats.recentSupport.map((request) => (
-                  <div
-                    key={request.id}
-                    className="p-3 bg-slate-50 rounded-xl flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="font-medium text-slate-800">{request.customer_name}</div>
-                      <div className="text-sm text-slate-500">{request.brand}</div>
-                    </div>
-                    <div className="text-left">
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full ${
-                          request.status === 'open'
-                            ? 'bg-orange-100 text-orange-600'
-                            : 'bg-green-100 text-green-600'
-                        }`}
-                      >
-                        {request.status === 'open' ? 'פתוח' : 'טופל'}
-                      </span>
-                      <div className="text-xs text-slate-400 mt-1">
-                        {formatDate(request.created_at)}
+                      <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
+                          style={{
+                            width: `${(count / Math.max(...Object.values(stats.brandCounts))) * 100}%`,
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
                 ))}
-              </div>
-            ) : (
-              <p className="text-slate-400 text-center py-8">אין עדיין פניות</p>
-            )}
-          </motion.div>
-        </div>
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-6 text-sm">אין עדיין פניות</p>
+          )}
+        </motion.div>
 
-        {/* Recent Chat Sessions */}
+        {/* Recent Support */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="bg-white rounded-2xl shadow-sm p-6 mt-8"
+          transition={{ delay: 0.25 }}
+          className="bg-gray-900/80 backdrop-blur rounded-2xl p-4 border border-gray-800 mb-4"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-800">שיחות אחרונות</h2>
-            <Link href="/admin/chats" className="text-sm text-indigo-600 hover:text-indigo-700">
-              הצג הכל
+            <h2 className="text-sm font-semibold text-white">פניות אחרונות</h2>
+            <Link href="/admin/support" className="text-xs text-purple-400">
+              הכל →
+            </Link>
+          </div>
+          {stats?.recentSupport && stats.recentSupport.length > 0 ? (
+            <div className="space-y-2">
+              {stats.recentSupport.slice(0, 3).map((request) => (
+                <div
+                  key={request.id}
+                  className="p-3 bg-gray-800/50 rounded-xl flex items-center justify-between"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-white truncate">{request.customer_name}</div>
+                    <div className="text-xs text-gray-500">{request.brand}</div>
+                  </div>
+                  <div className="flex flex-col items-end gap-1 mr-3">
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                        request.status === 'open'
+                          ? 'bg-orange-500/20 text-orange-400'
+                          : 'bg-green-500/20 text-green-400'
+                      }`}
+                    >
+                      {request.status === 'open' ? 'פתוח' : 'טופל'}
+                    </span>
+                    <span className="text-[10px] text-gray-600">
+                      {formatDate(request.created_at)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-6 text-sm">אין עדיין פניות</p>
+          )}
+        </motion.div>
+
+        {/* Recent Sessions */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gray-900/80 backdrop-blur rounded-2xl p-4 border border-gray-800"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-white">שיחות אחרונות</h2>
+            <Link href="/admin/chats" className="text-xs text-purple-400">
+              הכל →
             </Link>
           </div>
           {stats?.recentSessions && stats.recentSessions.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {stats.recentSessions.map((session) => (
+            <div className="grid grid-cols-2 gap-2">
+              {stats.recentSessions.slice(0, 4).map((session) => (
                 <Link
                   key={session.id}
                   href={`/admin/chats?session=${session.id}`}
-                  className="p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors"
+                  className="p-3 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors"
                 >
-                  <div className="text-sm font-medium text-slate-800">
+                  <div className="text-sm font-medium text-white">
                     {session.message_count} הודעות
                   </div>
-                  <div className="text-xs text-slate-400 mt-1">
+                  <div className="text-[10px] text-gray-500 mt-1">
                     {formatDate(session.created_at)}
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
-            <p className="text-slate-400 text-center py-8">אין עדיין שיחות</p>
+            <p className="text-gray-500 text-center py-6 text-sm">אין עדיין שיחות</p>
           )}
         </motion.div>
       </main>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
@@ -12,7 +13,6 @@ export default function AdminLogin() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if already logged in
     fetch('/api/admin/auth')
       .then(res => res.json())
       .then(data => {
@@ -42,7 +42,7 @@ export default function AdminLogin() {
       if (res.ok) {
         router.push('/admin/dashboard');
       } else {
-        setError(data.error || 'שגיאה בהתחברות');
+        setError(data.error || 'סיסמה שגויה');
       }
     } catch {
       setError('שגיאה בהתחברות');
@@ -53,50 +53,64 @@ export default function AdminLogin() {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center" dir="rtl">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center" dir="rtl">
+        <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4" dir="rtl">
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4" dir="rtl">
+      {/* Background gradient */}
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-900/20 via-gray-950 to-pink-900/20" />
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="relative w-full max-w-sm"
       >
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-slate-800 mb-2">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <div className="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-purple-500/20">
+            <Image
+              src="/corrin-avatar.jpg"
+              alt="Corrin"
+              width={80}
+              height={80}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Card */}
+        <div className="bg-gray-900/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-gray-800">
+          <div className="text-center mb-6">
+            <h1 className="text-xl font-bold text-white mb-1">
               פאנל ניהול
             </h1>
-            <p className="text-slate-500">
-              Corrin Gideon - ניהול צ׳אטבוט
+            <p className="text-gray-400 text-sm">
+              Corrin Gideon
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
-                סיסמה
-              </label>
               <input
-                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
-                placeholder="הזיני את הסיסמה"
+                className="w-full px-4 py-3.5 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all text-center text-lg tracking-widest"
+                placeholder="••••••"
                 required
+                autoFocus
               />
             </div>
 
             {error && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="p-3 bg-red-50 text-red-600 rounded-lg text-sm text-center"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm text-center"
               >
                 {error}
               </motion.div>
@@ -105,23 +119,18 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/25"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-                  מתחבר...
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 </span>
               ) : (
-                'התחברות'
+                'כניסה'
               )}
             </button>
           </form>
         </div>
-
-        <p className="text-center text-slate-400 text-sm mt-4">
-          © Corrin Gideon 2025
-        </p>
       </motion.div>
     </div>
   );
