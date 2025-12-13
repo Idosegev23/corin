@@ -16,7 +16,7 @@ interface Message {
 const CORRIN_AVATAR = 'https://unavatar.io/instagram/corringideon';
 const CORRIN_AVATAR_FALLBACK = '/corrin-avatar.jpg';
 
-// Instagram image component with fallback
+// Instagram image component with embed fallback
 function InstagramImage({ 
   shortcode, 
   alt, 
@@ -35,7 +35,7 @@ function InstagramImage({
   sizes?: string;
 }) {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchImage = useCallback(async () => {
     try {
@@ -44,12 +44,12 @@ function InstagramImage({
         const data = await res.json();
         if (data.thumbnail_url) {
           setImageSrc(data.thumbnail_url);
-          return;
         }
       }
-      setError(true);
     } catch {
-      setError(true);
+      // Silent fail - will show gradient placeholder
+    } finally {
+      setLoading(false);
     }
   }, [shortcode]);
 
@@ -57,12 +57,24 @@ function InstagramImage({
     fetchImage();
   }, [fetchImage]);
 
-  if (error || !imageSrc) {
-    return (
-      <div className={`bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center ${className}`}>
-        <span className="text-gray-400 text-xs">@corringideon</span>
-      </div>
-    );
+  // Gradient placeholder with Instagram icon
+  const placeholder = (
+    <div className={`bg-gradient-to-br from-purple-100 via-pink-50 to-orange-100 flex flex-col items-center justify-center ${fill ? 'absolute inset-0' : ''} ${className}`}
+         style={!fill ? { width: width || 200, height: height || 200 } : undefined}>
+      <svg className="w-6 h-6 text-gray-400 mb-1" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
+        <circle cx="12" cy="12" r="3.5"/>
+      </svg>
+      <span className="text-gray-400 text-[10px]">צפייה באינסטגרם</span>
+    </div>
+  );
+
+  if (loading) {
+    return placeholder;
+  }
+
+  if (!imageSrc) {
+    return placeholder;
   }
 
   if (fill) {
