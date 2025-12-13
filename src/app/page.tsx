@@ -181,8 +181,35 @@ export default function Home() {
   const [avatarSrc, setAvatarSrc] = useState(CORRIN_AVATAR);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [supportState, setSupportState] = useState<SupportState | null>(null);
+  const [avatarClickCount, setAvatarClickCount] = useState(0);
+  const avatarClickTimer = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Handle triple click on avatar for admin access
+  const handleAvatarClick = () => {
+    setAvatarClickCount((prev) => {
+      const newCount = prev + 1;
+      
+      // Reset timer on each click
+      if (avatarClickTimer.current) {
+        clearTimeout(avatarClickTimer.current);
+      }
+      
+      // If 3 clicks, navigate to admin
+      if (newCount >= 3) {
+        window.location.href = '/admin';
+        return 0;
+      }
+      
+      // Reset count after 1 second of no clicks
+      avatarClickTimer.current = setTimeout(() => {
+        setAvatarClickCount(0);
+      }, 1000);
+      
+      return newCount;
+    });
+  };
 
   // Ask assistant about something
   const askAssistant = (question: string) => {
@@ -393,7 +420,10 @@ export default function Home() {
       <header className="sticky top-0 z-50 glass px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 overflow-hidden leaf-tr">
+            <div 
+              className="w-10 h-10 overflow-hidden leaf-tr cursor-pointer select-none"
+              onClick={handleAvatarClick}
+            >
               <Image
                 src={avatarSrc}
                 alt="קורין גדעון"
