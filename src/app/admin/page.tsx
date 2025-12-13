@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
@@ -63,6 +64,14 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4" dir="rtl">
       {/* Background gradient */}
       <div className="fixed inset-0 bg-gradient-to-br from-purple-900/20 via-gray-950 to-pink-900/20" />
+      
+      {/* Back button */}
+      <Link
+        href="/"
+        className="fixed top-4 right-4 z-10 px-4 py-2 text-sm text-gray-400 hover:text-white bg-gray-800/50 hover:bg-gray-800 backdrop-blur rounded-xl transition-all"
+      >
+        ← חזרה
+      </Link>
       
       <motion.div
         initial={{ opacity: 0, y: 20 }}

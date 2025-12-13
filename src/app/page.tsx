@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { products, posts, categories, couponCodes, recipes, Recipe } from '@/data/corrin-data';
@@ -394,7 +393,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 glass px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/admin" className="w-10 h-10 overflow-hidden leaf-tr hover:ring-2 hover:ring-indigo-200 transition-all">
+            <div className="w-10 h-10 overflow-hidden leaf-tr">
               <Image
                 src={avatarSrc}
                 alt="קורין גדעון"
@@ -404,7 +403,7 @@ export default function Home() {
                 onError={() => {}}
                 priority
               />
-            </Link>
+            </div>
             <div>
               <h1 className="font-semibold text-base text-gray-900">העוזרת של קורין</h1>
               <p className="text-xs text-gray-500">מוצרים, קופונים ומתכונים</p>
@@ -492,6 +491,10 @@ export default function Home() {
                         <li className="flex items-center gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] flex-shrink-0" />
                           לשתף קודי קופון והמלצות על מוצרים
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] flex-shrink-0" />
+                          לענות על שאלות בנושא בישול ואפייה
                         </li>
                         <li className="flex items-center gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] flex-shrink-0" />
