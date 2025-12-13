@@ -231,27 +231,3 @@ body {
   display: none;
 }
 
-/* Seamless Marquee Animations */
-@keyframes marquee-seamless {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-33.333%); }
-}
-
-@keyframes marquee-seamless-reverse {
-  0% { transform: translateX(-33.333%); }
-  100% { transform: translateX(0%); }
-}
-
-.animate-marquee-seamless {
-  animation: marquee-seamless var(--duration, 40s) linear infinite;
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
-.animate-marquee-seamless-reverse {
-  animation: marquee-seamless-reverse var(--duration, 40s) linear infinite;
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-}

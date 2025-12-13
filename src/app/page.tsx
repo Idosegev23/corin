@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { products, posts, categories, couponCodes, recipes, Recipe } from '@/data/corrin-data';
-import { Marquee } from '@/components/Marquee';
+import Marquee from 'react-fast-marquee';
 import { BrandCards } from '@/components/BrandCards';
 import { SupportForm } from '@/components/SupportForm';
 
@@ -584,7 +584,7 @@ export default function Home() {
                     <div className="w-full mt-6">
                       <p className="text-xs text-gray-400 mb-3 text-center">מוצרים מומלצים</p>
                       <div className="relative">
-                        <Marquee pauseOnHover className="[--duration:30s]">
+                        <Marquee autoFill pauseOnHover speed={40} direction="right">
                           {products.map((product) => (
                             <a
                               key={product.id}
