@@ -584,14 +584,14 @@ export default function Home() {
                     <div className="w-full mt-6">
                       <p className="text-xs text-gray-400 mb-3 text-center">מוצרים מומלצים</p>
                       <div className="relative">
-                        <Marquee autoFill pauseOnHover speed={40} direction="right">
+                        <Marquee autoFill pauseOnHover speed={40} direction="right" className="py-2">
                           {products.map((product) => (
                             <a
                               key={product.id}
                               href={product.shortLink || product.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex-shrink-0 w-36 bg-white border border-gray-100 rounded-xl hover:border-indigo-300 hover:shadow-lg transition-all overflow-hidden group"
+                              className="inline-block w-36 mx-2 bg-white border border-gray-100 rounded-xl hover:border-indigo-300 hover:shadow-lg transition-all overflow-hidden group"
                             >
                               {/* Product Image */}
                               <div className="w-full h-24 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center overflow-hidden">
