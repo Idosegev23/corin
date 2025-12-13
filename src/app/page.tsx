@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
@@ -14,7 +14,81 @@ interface Message {
 
 // Instagram profile avatar via unavatar.io
 const CORRIN_AVATAR = 'https://unavatar.io/instagram/corringideon';
-const CORRIN_AVATAR_FALLBACK = '/corrin-avatar.jpg'; // fallback local image
+const CORRIN_AVATAR_FALLBACK = '/corrin-avatar.jpg';
+
+// Instagram image component with fallback
+function InstagramImage({ 
+  shortcode, 
+  alt, 
+  className = '',
+  fill = false,
+  width,
+  height,
+  sizes
+}: { 
+  shortcode: string; 
+  alt: string; 
+  className?: string;
+  fill?: boolean;
+  width?: number;
+  height?: number;
+  sizes?: string;
+}) {
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [error, setError] = useState(false);
+
+  const fetchImage = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/instagram?shortcode=${shortcode}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.thumbnail_url) {
+          setImageSrc(data.thumbnail_url);
+          return;
+        }
+      }
+      setError(true);
+    } catch {
+      setError(true);
+    }
+  }, [shortcode]);
+
+  useEffect(() => {
+    fetchImage();
+  }, [fetchImage]);
+
+  if (error || !imageSrc) {
+    return (
+      <div className={`bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center ${className}`}>
+        <span className="text-gray-400 text-xs">@corringideon</span>
+      </div>
+    );
+  }
+
+  if (fill) {
+    return (
+      <Image
+        src={imageSrc}
+        alt={alt}
+        fill
+        sizes={sizes}
+        className={`object-cover ${className}`}
+        unoptimized
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={imageSrc}
+      alt={alt}
+      width={width || 200}
+      height={height || 200}
+      className={`object-cover ${className}`}
+      unoptimized
+    />
+  );
+}
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'chat' | 'search'>('chat');
@@ -412,15 +486,13 @@ export default function Home() {
                             className="flex gap-4 p-3 bg-gray-50 hover:bg-gray-100 transition-colors leaf-tr"
                           >
                             <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200">
-                              {recipe.image && (
-                                <Image
-                                  src={recipe.image}
-                                  alt={recipe.name}
-                                  width={80}
-                                  height={80}
-                                  className="w-full h-full object-cover"
-                                />
-                              )}
+                              <InstagramImage
+                                shortcode={recipe.shortcode}
+                                alt={recipe.name}
+                                width={80}
+                                height={80}
+                                className="w-full h-full"
+                              />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="font-medium text-sm text-gray-900">{recipe.name}</h4>
@@ -481,15 +553,13 @@ export default function Home() {
                           onClick={() => openInstagramPost(post.url)}
                           className="aspect-square relative rounded-lg overflow-hidden bg-gray-100 group"
                         >
-                          {post.image && (
-                            <Image
-                              src={post.image}
-                              alt={post.caption}
-                              fill
-                              sizes="(max-width: 768px) 33vw, 150px"
-                              className="object-cover transition-transform group-hover:scale-105"
-                            />
-                          )}
+                          <InstagramImage
+                            shortcode={post.shortcode}
+                            alt={post.caption}
+                            fill
+                            sizes="(max-width: 768px) 33vw, 150px"
+                            className="transition-transform group-hover:scale-105"
+                          />
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
                             <p className="text-[10px] text-white line-clamp-2">{post.caption}</p>
                           </div>
