@@ -22,16 +22,26 @@ interface Message {
   content: string;
 }
 
-// Seamless Marquee Component
-function SeamlessMarquee({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+// Seamless Marquee Component (true seamless loop: two identical groups, animate -50%)
+function SeamlessMarquee({
+  children,
+  className = '',
+  durationSec = 28,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  durationSec?: number;
+}) {
   return (
     <div className={`overflow-hidden ${className}`}>
-      <div 
-        className="flex animate-marquee"
-        style={{ '--duration': '30s' } as React.CSSProperties}
+      <div
+        className="flex w-max animate-marquee"
+        style={{ '--duration': `${durationSec}s` } as React.CSSProperties}
       >
-        {children}
-        {children}
+        <div className="flex w-max items-center gap-3 px-2">{children}</div>
+        <div className="flex w-max items-center gap-3 px-2" aria-hidden="true">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -136,14 +146,7 @@ export default function Home() {
     'מה יש לך בטיפוח?',
   ];
 
-  const pastelColors = [
-    '#FFECD2', // peach
-    '#FFE4E6', // pink
-    '#E8E0F0', // lavender
-    '#D4EDDA', // mint
-    '#D6EAF8', // sky
-    '#FFF8E7', // cream
-  ];
+  const tints = ['var(--tint-1)', 'var(--tint-2)', 'var(--tint-3)', 'var(--tint-4)', 'var(--tint-5)', 'var(--tint-6)'];
 
   const openInstagramPost = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -155,18 +158,15 @@ export default function Home() {
       <header className="sticky top-0 z-50 glass px-4 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div 
-              className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ background: pastelColors[0] }}
-            >
-              <span className="text-2xl font-bold" style={{ color: '#F77F3F' }}>C</span>
+            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-white border border-[var(--border)] shadow-sm">
+              <span className="text-xl font-bold" style={{ color: '#F77F3F' }}>C</span>
             </div>
             <div>
               <h1 className="font-bold text-xl text-gray-800">Corrin Gideon</h1>
               <p className="text-sm text-gray-500">העוזרת האישית שלך</p>
             </div>
           </div>
-          <div className="flex gap-2 bg-white rounded-full p-1.5 shadow-sm border border-gray-100">
+          <div className="flex gap-2 bg-white rounded-full p-1.5 shadow-sm border border-[var(--border)]">
             <button
               onClick={() => setActiveTab('chat')}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
@@ -204,46 +204,55 @@ export default function Home() {
             >
               {/* Chat Messages */}
               <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+                {/* Marquee module inside the main chat window (professional, always visible) */}
+                <div className="marquee-shell rounded-2xl p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-semibold text-gray-800">מוצרים חמים</p>
+                    <button
+                      onClick={() => {
+                        setActiveTab('search');
+                        setSelectedCategory('all');
+                        setSearchQuery('');
+                      }}
+                      className="text-sm text-gray-600 hover:text-gray-800 underline underline-offset-2"
+                      type="button"
+                    >
+                      לכל המוצרים
+                    </button>
+                  </div>
+                  <SeamlessMarquee durationSec={26} className="py-1">
+                    {products.map((product) => (
+                      <a
+                        key={product.id}
+                        href={product.shortLink || product.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="marquee-item flex items-center gap-3 px-4 py-2 rounded-full whitespace-nowrap"
+                      >
+                        <span className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-[var(--border)] bg-[var(--surface-2)]">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover block"
+                          />
+                        </span>
+                        <span className="text-sm font-medium text-gray-800">{product.name}</span>
+                        {product.couponCode && (
+                          <span className="text-xs text-white px-2.5 py-1 rounded-full font-semibold" style={{ background: '#F77F3F' }}>
+                            {product.couponCode}
+                          </span>
+                        )}
+                      </a>
+                    ))}
+                  </SeamlessMarquee>
+                </div>
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center text-center px-4">
-                    {/* Marquee inside the chat area */}
-                    <div className="w-full mb-8 rounded-2xl overflow-hidden" style={{ background: pastelColors[0] }}>
-                      <SeamlessMarquee className="py-3">
-                        <div className="flex gap-4 px-2">
-                          {products.map((product) => (
-                            <a
-                              key={product.id}
-                              href={product.shortLink || product.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="marquee-item flex items-center gap-3 px-4 py-2.5 rounded-full whitespace-nowrap"
-                            >
-                              <img
-                                src={product.image}
-                                alt={product.name}
-                                className="w-9 h-9 rounded-full object-cover border-2 border-white"
-                              />
-                              <span className="text-sm font-medium text-gray-700">{product.name}</span>
-                              {product.couponCode && (
-                                <span 
-                                  className="text-xs text-white px-2.5 py-1 rounded-full font-bold"
-                                  style={{ background: '#F77F3F' }}
-                                >
-                                  {product.couponCode}
-                                </span>
-                              )}
-                            </a>
-                          ))}
-                        </div>
-                      </SeamlessMarquee>
-                    </div>
-
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: 'spring', bounce: 0.5 }}
-                      className="w-24 h-24 rounded-full flex items-center justify-center mb-6 animate-pulse-glow"
-                      style={{ background: pastelColors[1] }}
+                      className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 animate-pulse-glow bg-white border border-[var(--border)] shadow-sm"
                     >
                       <Sparkles className="w-12 h-12" style={{ color: '#F77F3F' }} />
                     </motion.div>
@@ -253,7 +262,43 @@ export default function Home() {
                       שאלי אותי הכל על המוצרים שלי, קודי קופון, מתכונים ומה שתרצי!
                     </p>
                     
-                    <div className="flex flex-wrap gap-3 justify-center max-w-lg">
+                    {/* Entry points (recipes + coupons) */}
+                    <div className="w-full max-w-lg grid grid-cols-2 gap-3 mb-6">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveTab('search');
+                          setSelectedCategory('recipes');
+                          setSearchQuery('מתכון');
+                        }}
+                        className="product-card rounded-2xl p-4 text-right"
+                        style={{ background: 'var(--tint-2)' }}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="font-semibold text-gray-900">מתכונים</p>
+                          <ChefHat className="w-5 h-5 text-[#F77F3F]" />
+                        </div>
+                        <p className="text-sm text-gray-600">גלי מתכונים מהפוסטים – מסודר ונוח.</p>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveTab('search');
+                          setSelectedCategory('all');
+                          setSearchQuery('קופון');
+                        }}
+                        className="product-card rounded-2xl p-4 text-right"
+                        style={{ background: 'var(--tint-1)' }}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="font-semibold text-gray-900">קודי קופון</p>
+                          <span className="text-lg">🎫</span>
+                        </div>
+                        <p className="text-sm text-gray-600">כל הקודים במקום אחד, העתקה בלחיצה.</p>
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 justify-center max-w-lg">
                       {suggestedQuestions.map((q, i) => (
                         <motion.button
                           key={i}
@@ -264,11 +309,7 @@ export default function Home() {
                             setInputValue(q);
                             inputRef.current?.focus();
                           }}
-                          className="px-4 py-2.5 text-sm rounded-full border transition-all text-gray-700 hover:shadow-md"
-                          style={{ 
-                            background: pastelColors[i % pastelColors.length],
-                            borderColor: 'rgba(0,0,0,0.05)'
-                          }}
+                          className="px-4 py-2 text-sm rounded-full border border-[var(--border)] bg-white text-gray-700 hover:bg-[var(--surface-2)] transition-all"
                         >
                           {q}
                         </motion.button>
@@ -410,7 +451,7 @@ export default function Home() {
                     />
                   </div>
                   
-                  {/* Categories - Bigger with pastel colors */}
+                  {/* Categories - Bigger (clean, professional) */}
                   <div className="flex gap-3 mt-4 overflow-x-auto pb-2 scrollbar-hide">
                     {categories.map((cat, index) => (
                       <button
@@ -419,11 +460,8 @@ export default function Home() {
                         className={`px-5 py-3 rounded-full text-base whitespace-nowrap flex items-center gap-2 font-medium transition-all border ${
                           selectedCategory === cat.id 
                             ? 'bg-[#F77F3F] text-white border-[#F77F3F]' 
-                            : 'text-gray-700 border-transparent hover:shadow-sm'
+                            : 'bg-white text-gray-700 border-[var(--border)] hover:bg-[var(--surface-2)]'
                         }`}
-                        style={selectedCategory !== cat.id ? { 
-                          background: pastelColors[index % pastelColors.length] 
-                        } : {}}
                       >
                         <span className="text-xl">{cat.icon}</span>
                         <span>{cat.name}</span>
@@ -451,7 +489,7 @@ export default function Home() {
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleCopyCode(coupon.code)}
                             className="rounded-2xl p-4 cursor-pointer transition-all border border-transparent hover:border-[#F77F3F]"
-                            style={{ background: pastelColors[index % pastelColors.length] }}
+                            style={{ background: tints[index % tints.length] }}
                           >
                             <div className="flex items-center justify-between mb-2">
                               <span className="text-sm text-gray-600">{coupon.brand}</span>
@@ -487,7 +525,7 @@ export default function Home() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
                             className="rounded-2xl overflow-hidden flex gap-4 border border-transparent hover:border-[#F77F3F] transition-all"
-                            style={{ background: pastelColors[index % pastelColors.length] }}
+                            style={{ background: tints[index % tints.length] }}
                           >
                             <div className="w-28 h-28 flex-shrink-0">
                               <img
