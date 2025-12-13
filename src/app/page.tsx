@@ -105,9 +105,8 @@ function RecipeModal({
   );
 }
 
-// Instagram profile avatar via unavatar.io
-const CORRIN_AVATAR = 'https://unavatar.io/instagram/corringideon';
-const CORRIN_AVATAR_FALLBACK = '/corrin-avatar.jpg';
+// Corrin's profile avatar - local file
+const CORRIN_AVATAR = '/corrin-avatar.jpg';
 
 // Instagram image component - uses local downloaded images
 function InstagramImage({ 
@@ -275,7 +274,7 @@ export default function Home() {
                 width={40}
                 height={40}
                 className="w-full h-full object-cover"
-                onError={() => setAvatarSrc(CORRIN_AVATAR_FALLBACK)}
+                onError={() => {}}
                 priority
               />
             </div>
@@ -331,7 +330,7 @@ export default function Home() {
                         width={64}
                         height={64}
                         className="w-full h-full object-cover"
-                        onError={() => setAvatarSrc(CORRIN_AVATAR_FALLBACK)}
+                        onError={() => {}}
                         priority
                       />
                     </div>
