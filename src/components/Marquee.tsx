@@ -1,64 +1,64 @@
 'use client';
 
-import { ComponentPropsWithoutRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(' ');
-}
-
-interface MarqueeProps extends ComponentPropsWithoutRef<'div'> {
-  className?: string;
-  reverse?: boolean;
-  pauseOnHover?: boolean;
+interface MarqueeProps {
   children: React.ReactNode;
-  vertical?: boolean;
-  repeat?: number;
+  speed?: number;
+  pauseOnHover?: boolean;
+  className?: string;
 }
 
-export function Marquee({
-  className,
-  reverse = false,
-  pauseOnHover = false,
-  children,
-  vertical = false,
-  repeat = 4,
-  ...props
+export function Marquee({ 
+  children, 
+  speed = 30, 
+  pauseOnHover = true,
+  className = ''
 }: MarqueeProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (!containerRef.current || !scrollerRef.current) return;
+    
+    const scroller = scrollerRef.current;
+    const scrollerContent = Array.from(scroller.children);
+    
+    // Duplicate items for seamless loop
+    scrollerContent.forEach((item) => {
+      const clone = item.cloneNode(true) as HTMLElement;
+      scroller.appendChild(clone);
+    });
+  }, []);
+
   return (
-    <div
-      {...props}
-      className={cn(
-        'group flex overflow-hidden',
-        !vertical && 'flex-row',
-        vertical && 'flex-col',
-        className
-      )}
-      style={{ 
-        '--duration': '40s', 
-        '--gap': '1rem' 
-      } as React.CSSProperties}
+    <div 
+      ref={containerRef}
+      className={`overflow-hidden ${className}`}
+      onMouseEnter={() => pauseOnHover && setIsPaused(true)}
+      onMouseLeave={() => pauseOnHover && setIsPaused(false)}
     >
-      {Array(repeat)
-        .fill(0)
-        .map((_, i) => (
-          <div
-            key={i}
-            className={cn(
-              'flex shrink-0 gap-4',
-              !vertical && 'flex-row',
-              vertical && 'flex-col',
-              pauseOnHover && 'group-hover:[animation-play-state:paused]',
-              reverse && '[animation-direction:reverse]'
-            )}
-            style={{
-              animation: vertical 
-                ? 'marquee-vertical var(--duration) linear infinite' 
-                : 'marquee var(--duration) linear infinite'
-            }}
-          >
-            {children}
-          </div>
-        ))}
+      <div
+        ref={scrollerRef}
+        className="flex gap-4 w-max"
+        style={{
+          animation: `scroll ${speed}s linear infinite`,
+          animationPlayState: isPaused ? 'paused' : 'running',
+        }}
+      >
+        {children}
+      </div>
+      <style jsx>{`
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+      `}</style>
     </div>
   );
 }

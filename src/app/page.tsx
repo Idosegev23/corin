@@ -429,40 +429,43 @@ export default function Home() {
                     <div className="w-full mt-6">
                       <p className="text-xs text-gray-400 mb-3 text-center">מוצרים מומלצים</p>
                       <div className="relative">
-                        <Marquee pauseOnHover className="[--duration:30s]">
+                        <Marquee speed={25} pauseOnHover>
                           {products.map((product) => (
                             <a
                               key={product.id}
                               href={product.shortLink || product.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex-shrink-0 w-36 bg-white border border-gray-100 rounded-xl hover:border-gray-200 hover:shadow-md transition-all overflow-hidden"
+                              className="flex-shrink-0 w-40 bg-white border border-gray-100 rounded-xl hover:border-gray-300 hover:shadow-lg transition-all overflow-hidden"
                             >
-                              <div className="w-full h-28 bg-gray-50 flex items-center justify-center p-2">
+                              <div className="w-full h-20 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
                                 {product.image ? (
                                   <img
                                     src={product.image}
                                     alt={product.name}
-                                    className="w-full h-full object-contain"
+                                    className="w-12 h-12 object-contain"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).style.display = 'none';
+                                    }}
                                   />
                                 ) : (
                                   <span className="text-2xl font-bold text-gray-300">{product.brand.charAt(0)}</span>
                                 )}
                               </div>
-                              <div className="p-2">
+                              <div className="p-3">
                                 <p className="font-medium text-gray-900 text-xs truncate">{product.name}</p>
                                 <p className="text-[10px] text-gray-500 mt-0.5">{product.brand}</p>
                                 {product.couponCode && (
-                                  <span className="inline-block mt-1 px-1.5 py-0.5 bg-green-50 text-green-700 text-[9px] font-medium rounded">
-                                    קוד קופון
+                                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-green-50 text-green-700 text-[10px] font-medium rounded-full">
+                                    קופון
                                   </span>
                                 )}
                               </div>
                             </a>
                           ))}
                         </Marquee>
-                        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent z-10" />
-                        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent z-10" />
+                        <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
+                        <div className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
                       </div>
                     </div>
                   </div>
