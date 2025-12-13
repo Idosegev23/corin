@@ -29,7 +29,7 @@ export interface Recipe {
   shortcode: string;
 }
 
-// Products with real links - using favicon as reliable image source
+// Products with local images
 export const products: Product[] = [
   {
     id: '1',
@@ -38,7 +38,7 @@ export const products: Product[] = [
     category: 'אופנה',
     link: 'https://addictonline.co.il/TEDDY_COAT_CORIN_',
     shortLink: 'https://linkg.pt/s/w4b6bmk3',
-    image: 'https://www.google.com/s2/favicons?domain=addictonline.co.il&sz=128',
+    image: '/products/product-1.png',
   },
   {
     id: '2',
@@ -47,7 +47,7 @@ export const products: Product[] = [
     category: 'אופנה',
     link: 'https://addictonline.co.il/AUSTIN_KNIT_CORIN_',
     shortLink: 'https://linkg.pt/s/j408tz04',
-    image: 'https://www.google.com/s2/favicons?domain=addictonline.co.il&sz=128',
+    image: '/products/product-2.png',
   },
   {
     id: '3',
@@ -56,7 +56,7 @@ export const products: Product[] = [
     category: 'אופנה',
     link: 'https://addictonline.co.il/ANABELLE_BLAZER_CORIN_',
     shortLink: 'https://linkg.pt/s/54dj1o0o',
-    image: 'https://www.google.com/s2/favicons?domain=addictonline.co.il&sz=128',
+    image: '/products/product-3.png',
   },
   {
     id: '4',
@@ -66,7 +66,7 @@ export const products: Product[] = [
     link: 'https://cpb.co.il/philips-sonicare/',
     shortLink: 'https://linkg.pt/s/vs79l2vo',
     couponCode: 'CORRINSONI',
-    image: 'https://www.google.com/s2/favicons?domain=philips.com&sz=128',
+    image: '/products/product-4.png',
   },
   {
     id: '5',
@@ -76,7 +76,7 @@ export const products: Product[] = [
     link: 'https://cpb.co.il/product/philips-lumea-ipl-9900-series/',
     shortLink: 'https://linkg.pt/s/n38hegy5',
     couponCode: 'corrin9900',
-    image: 'https://www.google.com/s2/favicons?domain=philips.com&sz=128',
+    image: '/products/product-5.png',
   },
   {
     id: '6',
@@ -85,7 +85,7 @@ export const products: Product[] = [
     category: 'טיפוח',
     link: 'https://shop.super-pharm.co.il/',
     shortLink: 'https://linkg.pt/s/eylyiko7',
-    image: 'https://www.google.com/s2/favicons?domain=dove.com&sz=128',
+    image: '/products/product-6.png',
   },
   {
     id: '7',
@@ -95,7 +95,7 @@ export const products: Product[] = [
     link: 'https://bobot-israel.com/',
     shortLink: 'https://linkg.pt/s/8b46gnmh',
     couponCode: 'corrin20',
-    image: 'https://www.google.com/s2/favicons?domain=bobot-israel.com&sz=128',
+    image: '/products/product-7.png',
   },
   {
     id: '8',
@@ -105,7 +105,6 @@ export const products: Product[] = [
     link: 'https://www.papajohns.co.il/shop/',
     shortLink: 'https://linkg.pt/s/d7rsc8jo',
     couponCode: 'CG10',
-    image: 'https://www.google.com/s2/favicons?domain=papajohns.com&sz=128',
   },
   {
     id: '9',
@@ -115,7 +114,7 @@ export const products: Product[] = [
     link: 'https://cpb.co.il/product-category/ergobaby/',
     shortLink: 'https://linkg.pt/s/l5rkxw2a',
     couponCode: 'CORRIN20',
-    image: 'https://www.google.com/s2/favicons?domain=ergobaby.com&sz=128',
+    image: '/products/product-9.jpg',
   },
   {
     id: '10',
@@ -124,7 +123,7 @@ export const products: Product[] = [
     category: 'טיפוח',
     link: 'https://il.erborian.com/',
     shortLink: 'https://linkg.pt/s/6mj0mt7k',
-    image: 'https://www.google.com/s2/favicons?domain=erborian.com&sz=128',
+    image: '/products/product-10.png',
   },
   {
     id: '11',
@@ -134,7 +133,7 @@ export const products: Product[] = [
     link: 'https://wolt.com/',
     shortLink: '',
     couponCode: 'CORRIN60',
-    image: 'https://www.google.com/s2/favicons?domain=wolt.com&sz=128',
+    image: '/products/product-11.jpeg',
   },
   {
     id: '12',
@@ -144,7 +143,7 @@ export const products: Product[] = [
     link: 'https://www.opticana.co.il/',
     shortLink: '',
     couponCode: 'CORRING10',
-    image: 'https://www.google.com/s2/favicons?domain=opticana.co.il&sz=128',
+    image: '/products/product-12.jpg',
   },
 ];
 

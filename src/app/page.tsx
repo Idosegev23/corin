@@ -551,36 +551,50 @@ export default function Home() {
                     <div className="w-full mt-6">
                       <p className="text-xs text-gray-400 mb-3 text-center">מוצרים מומלצים</p>
                       <div className="relative">
-                        <Marquee speed={25} pauseOnHover>
+                        <Marquee speed={30} pauseOnHover>
                           {products.map((product) => (
                             <a
                               key={product.id}
                               href={product.shortLink || product.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex-shrink-0 w-44 bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl hover:border-indigo-300 hover:shadow-lg transition-all overflow-hidden group"
+                              className="flex-shrink-0 w-36 bg-white border border-gray-100 rounded-xl hover:border-indigo-300 hover:shadow-lg transition-all overflow-hidden group"
                             >
-                              <div className="p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
-                                    {product.brand.charAt(0)}
-                                  </div>
-                                  <span className="text-[10px] text-gray-500 font-medium">{product.brand}</span>
-                                </div>
-                                <p className="font-medium text-gray-900 text-sm leading-tight line-clamp-2 min-h-[2.5rem]">{product.name}</p>
+                              {/* Product Image */}
+                              <div className="w-full h-24 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center overflow-hidden">
+                                {product.image ? (
+                                  <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                      const parent = target.parentElement;
+                                      if (parent) {
+                                        parent.innerHTML = `<span class="text-2xl font-bold text-gray-300">${product.brand.charAt(0)}</span>`;
+                                      }
+                                    }}
+                                  />
+                                ) : (
+                                  <span className="text-2xl font-bold text-gray-300">{product.brand.charAt(0)}</span>
+                                )}
+                              </div>
+                              {/* Product Info */}
+                              <div className="p-3">
+                                <p className="text-[10px] text-gray-400 mb-0.5">{product.brand}</p>
+                                <p className="font-medium text-gray-900 text-xs leading-tight line-clamp-2 min-h-[2rem]">{product.name}</p>
                                 {product.couponCode && (
-                                  <div className="mt-2 flex items-center gap-1">
-                                    <span className="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-semibold rounded-md">
-                                      {product.couponCode}
-                                    </span>
-                                  </div>
+                                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-green-50 text-green-700 text-[9px] font-semibold rounded">
+                                    {product.couponCode}
+                                  </span>
                                 )}
                               </div>
                             </a>
                           ))}
                         </Marquee>
-                        <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
-                        <div className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
+                        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent z-10" />
+                        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent z-10" />
                       </div>
                     </div>
                   </div>
