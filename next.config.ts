@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'unavatar.io',
+      },
+      {
+        protocol: 'https',
         hostname: 'avatar.vercel.sh',
       },
     ],

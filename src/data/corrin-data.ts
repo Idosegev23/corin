@@ -204,13 +204,13 @@ export const couponCodes = [
 ];
 
 export const categories = [
-  { id: 'all', name: 'הכל', icon: '✨' },
-  { id: 'fashion', name: 'אופנה', icon: '👗' },
-  { id: 'beauty', name: 'טיפוח', icon: '💄' },
-  { id: 'tech', name: 'טכנולוגיה', icon: '📱' },
-  { id: 'food', name: 'אוכל', icon: '🍕' },
-  { id: 'home', name: 'בית', icon: '🏠' },
-  { id: 'recipes', name: 'מתכונים', icon: '🍳' },
+  { id: 'all', name: 'הכל' },
+  { id: 'fashion', name: 'אופנה' },
+  { id: 'beauty', name: 'טיפוח' },
+  { id: 'tech', name: 'טכנולוגיה' },
+  { id: 'food', name: 'אוכל' },
+  { id: 'home', name: 'בית' },
+  { id: 'recipes', name: 'מתכונים' },
 ];
 
 export const recipes: Recipe[] = [

@@ -1,19 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
-import { 
-  Search, 
-  Send, 
-  MessageCircle, 
-  ShoppingBag, 
-  Sparkles,
-  ExternalLink,
-  Copy,
-  Check,
-  ChefHat
-} from 'lucide-react';
 import { products, posts, categories, couponCodes, recipes } from '@/data/corrin-data';
 
 interface Message {
@@ -22,30 +12,11 @@ interface Message {
   content: string;
 }
 
-// Seamless Marquee Component (true seamless loop: two identical groups, animate -50%)
-function SeamlessMarquee({
-  children,
-  className = '',
-  durationSec = 28,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  durationSec?: number;
-}) {
-  return (
-    <div className={`overflow-hidden ${className}`}>
-      <div
-        className="flex w-max animate-marquee"
-        style={{ '--duration': `${durationSec}s` } as React.CSSProperties}
-      >
-        <div className="flex w-max items-center gap-3 px-2">{children}</div>
-        <div className="flex w-max items-center gap-3 px-2" aria-hidden="true">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
+const CORRIN_INSTAGRAM_USERNAME =
+  process.env.NEXT_PUBLIC_CORRIN_INSTAGRAM_USERNAME || 'corrin';
+const CORRIN_AVATAR_PRIMARY = `https://unavatar.io/instagram/${CORRIN_INSTAGRAM_USERNAME}`;
+const CORRIN_AVATAR_FALLBACK = `https://avatar.vercel.sh/${CORRIN_INSTAGRAM_USERNAME}.svg`;
+const CARD_IMAGE_FALLBACK = 'https://avatar.vercel.sh/placeholder.png';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'chat' | 'search'>('chat');
@@ -56,6 +27,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [avatarSrc, setAvatarSrc] = useState(CORRIN_AVATAR_PRIMARY);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -159,7 +131,16 @@ export default function Home() {
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 flex items-center justify-center flex-shrink-0 bg-white border border-[var(--border)] shadow-sm" style={{ borderRadius: '16px 0 16px 16px' }}>
-              <span className="text-xl font-bold" style={{ color: 'var(--primary)' }}>C</span>
+              <Image
+                src={avatarSrc}
+                alt="קורין"
+                width={48}
+                height={48}
+                className="w-12 h-12 object-cover"
+                style={{ borderRadius: '16px 0 16px 16px' }}
+                onError={() => setAvatarSrc(CORRIN_AVATAR_FALLBACK)}
+                priority
+              />
             </div>
             <div>
               <h1 className="font-bold text-xl text-gray-800">העוזרת של קורין</h1>
@@ -175,7 +156,7 @@ export default function Home() {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              <MessageCircle className="w-5 h-5" />
+              צ׳אט
             </button>
             <button
               onClick={() => setActiveTab('search')}
@@ -185,7 +166,7 @@ export default function Home() {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              <Search className="w-5 h-5" />
+              חיפוש
             </button>
           </div>
         </div>
@@ -212,7 +193,16 @@ export default function Home() {
                       transition={{ type: 'spring', bounce: 0.5 }}
                       className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 animate-pulse-glow bg-white border border-[var(--border)] shadow-sm"
                     >
-                      <Sparkles className="w-12 h-12" style={{ color: 'var(--primary)' }} />
+                      <Image
+                        src={avatarSrc}
+                        alt="קורין"
+                        width={80}
+                        height={80}
+                        className="w-20 h-20 object-cover"
+                        style={{ borderRadius: '16px' }}
+                        onError={() => setAvatarSrc(CORRIN_AVATAR_FALLBACK)}
+                        priority
+                      />
                     </motion.div>
                     
                     <h2 className="text-2xl font-bold mb-3 text-gray-800">היי, איך אפשר לעזור?</h2>
@@ -234,7 +224,7 @@ export default function Home() {
                       >
                         <div className="flex items-center justify-between mb-2">
                           <p className="font-semibold text-gray-900">מתכונים</p>
-                          <ChefHat className="w-5 h-5 text-[var(--primary)]" />
+                          <span className="text-sm text-gray-500">קיצור דרך</span>
                         </div>
                         <p className="text-sm text-gray-600">גישה מהירה למתכונים.</p>
                       </button>
@@ -250,7 +240,7 @@ export default function Home() {
                       >
                         <div className="flex items-center justify-between mb-2">
                           <p className="font-semibold text-gray-900">קודי קופון</p>
-                          <span className="text-lg">🎫</span>
+                          <span className="text-sm text-gray-500">קיצור דרך</span>
                         </div>
                         <p className="text-sm text-gray-600">גישה מהירה לקופונים.</p>
                       </button>
@@ -307,7 +297,6 @@ export default function Home() {
                                       className="text-[var(--primary)] hover:text-[var(--accent)] underline inline-flex items-center gap-1"
                                     >
                                       {children}
-                                      <ExternalLink className="w-3 h-3" />
                                     </a>
                                   ),
                                   strong: ({ children }) => (
@@ -385,9 +374,9 @@ export default function Home() {
                   <button
                     onClick={handleSendMessage}
                     disabled={!inputValue.trim() || isLoading}
-                    className="btn-primary w-14 h-14 rounded-full flex items-center justify-center disabled:opacity-50"
+                    className="btn-primary px-6 h-14 rounded-full flex items-center justify-center disabled:opacity-50 font-medium"
                   >
-                    <Send className="w-6 h-6" />
+                    שלח
                   </button>
                 </div>
               </div>
@@ -403,20 +392,17 @@ export default function Home() {
               {/* Search Header */}
               <div className="sticky top-0 z-40 glass px-4 py-5">
                 <div className="max-w-2xl mx-auto">
-                  <div className="relative">
-                    <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="חפשי מוצרים, קודי קופון, מתכונים..."
-                      className="w-full search-input rounded-2xl pr-12 pl-5 py-4 text-base outline-none"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="חפשי מוצרים, קודי קופון, מתכונים..."
+                    className="w-full search-input rounded-2xl px-5 py-4 text-base outline-none"
+                  />
                   
                   {/* Categories - Bigger (clean, professional) */}
                   <div className="flex gap-3 mt-4 overflow-x-auto pb-2 scrollbar-hide">
-                    {categories.map((cat, index) => (
+                    {categories.map((cat) => (
                       <button
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
@@ -426,7 +412,6 @@ export default function Home() {
                             : 'bg-white text-gray-700 border-[var(--border)] hover:bg-[var(--surface-2)]'
                         }`}
                       >
-                        <span className="text-xl">{cat.icon}</span>
                         <span>{cat.name}</span>
                       </button>
                     ))}
@@ -441,7 +426,6 @@ export default function Home() {
                   {searchQuery.includes('קופון') || searchQuery.includes('הנחה') || searchQuery === '' ? (
                     <div className="mb-8">
                       <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
-                        <span className="text-2xl">🎫</span>
                         קודי קופון
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
@@ -456,11 +440,9 @@ export default function Home() {
                           >
                             <div className="flex items-center justify-between mb-2">
                               <span className="text-sm text-gray-600">{coupon.brand}</span>
-                              {copiedCode === coupon.code ? (
-                                <Check className="w-5 h-5 text-green-600" />
-                              ) : (
-                                <Copy className="w-5 h-5 text-gray-400" />
-                              )}
+                              <span className={`text-xs font-medium ${copiedCode === coupon.code ? 'text-green-700' : 'text-gray-500'}`}>
+                                {copiedCode === coupon.code ? 'הועתק' : 'העתק'}
+                              </span>
                             </div>
                             <p className="font-mono font-bold text-lg text-[var(--primary)]">{coupon.code}</p>
                             <p className="text-sm text-gray-600 mt-1">{coupon.description}</p>
@@ -474,7 +456,6 @@ export default function Home() {
                   {(selectedCategory === 'all' || selectedCategory === 'recipes' || searchQuery.includes('מתכון')) && (
                     <div className="mb-8">
                       <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
-                        <ChefHat className="w-6 h-6 text-[var(--primary)]" />
                         מתכונים
                       </h3>
                       <div className="space-y-3">
@@ -491,9 +472,11 @@ export default function Home() {
                             style={{ background: tints[index % tints.length] }}
                           >
                             <div className="w-28 h-28 flex-shrink-0">
-                              <img
-                                src={recipe.image}
+                              <Image
+                                src={recipe.image ?? CARD_IMAGE_FALLBACK}
                                 alt={recipe.name}
+                                width={112}
+                                height={112}
                                 className="w-full h-full object-cover"
                               />
                             </div>
@@ -503,8 +486,7 @@ export default function Home() {
                                 {recipe.description}
                               </p>
                               <div className="flex items-center gap-1 mt-3 text-sm text-[var(--primary)]">
-                                <ExternalLink className="w-4 h-4" />
-                                <span>לצפייה במתכון</span>
+                                <span className="underline underline-offset-2">לצפייה במתכון</span>
                               </div>
                             </div>
                           </motion.a>
@@ -515,7 +497,6 @@ export default function Home() {
 
                   {/* Products */}
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
-                    <ShoppingBag className="w-6 h-6 text-[var(--primary)]" />
                     מוצרים
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
@@ -531,9 +512,11 @@ export default function Home() {
                         className="product-card rounded-2xl overflow-hidden block"
                       >
                         <div className="aspect-square relative">
-                          <img
-                            src={product.image}
+                          <Image
+                            src={product.image ?? CARD_IMAGE_FALLBACK}
                             alt={product.name}
+                            fill
+                            sizes="(max-width: 768px) 50vw, 240px"
                             className="w-full h-full object-cover"
                           />
                           {product.couponCode && (
@@ -554,8 +537,7 @@ export default function Home() {
                             </p>
                           )}
                           <div className="flex items-center gap-1 mt-3 text-sm text-gray-500">
-                            <ExternalLink className="w-4 h-4" />
-                            <span>לצפייה</span>
+                            <span className="underline underline-offset-2">פתיחה</span>
                           </div>
                         </div>
                       </motion.a>
@@ -564,7 +546,6 @@ export default function Home() {
 
                   {/* Instagram Posts */}
                   <h3 className="text-xl font-bold mt-8 mb-4 flex items-center gap-2 text-gray-800">
-                    <span className="text-2xl">📸</span>
                     פוסטים אחרונים
                   </h3>
                   <div className="grid grid-cols-3 gap-3">
@@ -580,9 +561,11 @@ export default function Home() {
                         tabIndex={0}
                         onKeyDown={(e) => e.key === 'Enter' && openInstagramPost(post.url)}
                       >
-                        <img
-                          src={post.image}
+                        <Image
+                          src={post.image ?? CARD_IMAGE_FALLBACK}
                           alt={post.caption}
+                          fill
+                          sizes="(max-width: 768px) 33vw, 180px"
                           className="w-full h-full object-cover transition-transform group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
