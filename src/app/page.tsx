@@ -380,7 +380,7 @@ export default function Home() {
     'מה קוד הקופון הכי שווה עכשיו?',
     'יש לי שאלה על מתכון הפיצה',
     'אין לי ביצים, מה אפשר לשים במקום?',
-    'תמליצי על מתכון מהיר לארוחת ערב',
+    'יש לי בעיה עם הזמנה',
   ];
 
   const openInstagramPost = (url: string) => {
@@ -494,9 +494,12 @@ export default function Home() {
                         </li>
                         <li className="flex items-center gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] flex-shrink-0" />
-                          לענות על שאלות בנושא בישול ואפייה
+                          לטפל בבעיות עם מותגים שאני עובדת איתם
                         </li>
                       </ul>
+                      <p className="text-[10px] text-gray-400 mt-3 pt-3 border-t border-gray-100">
+                        יש בעיה עם הזמנה? פשוט תכתבי לי ואטפל בזה!
+                      </p>
                     </div>
 
                     {/* Quick actions */}
@@ -554,29 +557,22 @@ export default function Home() {
                               href={product.shortLink || product.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex-shrink-0 w-40 bg-white border border-gray-100 rounded-xl hover:border-gray-300 hover:shadow-lg transition-all overflow-hidden"
+                              className="flex-shrink-0 w-44 bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl hover:border-indigo-300 hover:shadow-lg transition-all overflow-hidden group"
                             >
-                              <div className="w-full h-20 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-                                {product.image ? (
-                                  <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-12 h-12 object-contain"
-                                    onError={(e) => {
-                                      (e.target as HTMLImageElement).style.display = 'none';
-                                    }}
-                                  />
-                                ) : (
-                                  <span className="text-2xl font-bold text-gray-300">{product.brand.charAt(0)}</span>
-                                )}
-                              </div>
-                              <div className="p-3">
-                                <p className="font-medium text-gray-900 text-xs truncate">{product.name}</p>
-                                <p className="text-[10px] text-gray-500 mt-0.5">{product.brand}</p>
+                              <div className="p-4">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
+                                    {product.brand.charAt(0)}
+                                  </div>
+                                  <span className="text-[10px] text-gray-500 font-medium">{product.brand}</span>
+                                </div>
+                                <p className="font-medium text-gray-900 text-sm leading-tight line-clamp-2 min-h-[2.5rem]">{product.name}</p>
                                 {product.couponCode && (
-                                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-green-50 text-green-700 text-[10px] font-medium rounded-full">
-                                    קופון
-                                  </span>
+                                  <div className="mt-2 flex items-center gap-1">
+                                    <span className="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-semibold rounded-md">
+                                      {product.couponCode}
+                                    </span>
+                                  </div>
                                 )}
                               </div>
                             </a>

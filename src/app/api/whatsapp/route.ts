@@ -21,8 +21,8 @@ function formatPhoneForWhatsApp(phone: string): string {
   return cleaned + '@c.us';
 }
 
-// Build the WhatsApp message
-function buildMessage(data: SupportData): string {
+// Build the WhatsApp message for the brand
+function buildBrandMessage(data: SupportData): string {
   return `היי ${data.brand} זה המנוע AI של קורין.
 לקוחה שלי בשם ${data.customerName} עם מספר הזמנה ${data.orderNumber},
 יש לה בעיה עם המשלוח - ${data.problemDetails}
@@ -35,6 +35,24 @@ function buildMessage(data: SupportData): string {
 בתודה, קורין גדעון
 
 אין להשיב להודעה זו`;
+}
+
+// Build the WhatsApp message for the customer
+function buildCustomerMessage(data: SupportData): string {
+  return `היי ${data.customerName}! 💜
+
+קיבלתי את הפנייה שלך לגבי ההזמנה מ-${data.brand}.
+
+רציתי לעדכן אותך שהעברתי את הפרטים ישירות לצוות של המותג והם יחזרו אלייך בהקדם האפשרי!
+
+פרטי הפנייה:
+🏷️ מותג: ${data.brand}
+📦 מספר הזמנה: ${data.orderNumber}
+📝 תיאור: ${data.problemDetails}
+
+אני כאן אם תצטרכי עוד משהו! 🙏
+
+קורין 💜`;
 }
 
 export async function POST(req: NextRequest) {
@@ -68,33 +86,57 @@ export async function POST(req: NextRequest) {
     // Target phone number (Corrin's support number)
     const targetPhone = '972547667775@c.us';
     
-    // Build the message
-    const message = buildMessage(supportData);
+    // Customer phone number
+    const customerPhone = formatPhoneForWhatsApp(supportData.customerPhone);
+    
+    // Build messages
+    const brandMessage = buildBrandMessage(supportData);
+    const customerMessage = buildCustomerMessage(supportData);
     
     // Send via GREEN-API
     const greenApiUrl = `https://api.greenapi.com/waInstance${instanceId}/sendMessage/${apiToken}`;
     
-    const response = await fetch(greenApiUrl, {
+    // Send message to Corrin's support number (for the brand)
+    const brandResponse = await fetch(greenApiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         chatId: targetPhone,
-        message: message,
+        message: brandMessage,
       }),
     });
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('GREEN-API error:', errorText);
+    if (!brandResponse.ok) {
+      const errorText = await brandResponse.text();
+      console.error('GREEN-API error (brand):', errorText);
       return NextResponse.json(
-        { error: 'Failed to send WhatsApp message', details: errorText },
+        { error: 'Failed to send WhatsApp message to brand', details: errorText },
         { status: 500 }
       );
     }
     
-    const result = await response.json();
+    const brandResult = await brandResponse.json();
+    
+    // Send message to customer
+    const customerResponse = await fetch(greenApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chatId: customerPhone,
+        message: customerMessage,
+      }),
+    });
+    
+    let customerMessageSent = false;
+    if (customerResponse.ok) {
+      customerMessageSent = true;
+    } else {
+      console.error('GREEN-API error (customer):', await customerResponse.text());
+    }
     
     // Mark support request as WhatsApp sent
     if (supportRequestId) {
@@ -106,7 +148,8 @@ export async function POST(req: NextRequest) {
     
     return NextResponse.json({
       success: true,
-      messageId: result.idMessage,
+      messageId: brandResult.idMessage,
+      customerMessageSent,
       message: 'הודעה נשלחה בהצלחה!'
     });
     
