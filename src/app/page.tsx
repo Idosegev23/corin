@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { products, posts, categories, couponCodes, recipes, Recipe } from '@/data/corrin-data';
@@ -393,7 +394,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 glass px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 overflow-hidden leaf-tr">
+            <Link href="/admin" className="w-10 h-10 overflow-hidden leaf-tr hover:ring-2 hover:ring-indigo-200 transition-all">
               <Image
                 src={avatarSrc}
                 alt="קורין גדעון"
@@ -403,7 +404,7 @@ export default function Home() {
                 onError={() => {}}
                 priority
               />
-            </div>
+            </Link>
             <div>
               <h1 className="font-semibold text-base text-gray-900">העוזרת של קורין</h1>
               <p className="text-xs text-gray-500">מוצרים, קופונים ומתכונים</p>
