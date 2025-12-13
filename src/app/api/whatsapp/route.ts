@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
 interface SupportData {
   brand: string;
@@ -38,7 +39,10 @@ function buildMessage(data: SupportData): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { supportData } = await req.json() as { supportData: SupportData };
+    const { supportData, supportRequestId } = await req.json() as { 
+      supportData: SupportData; 
+      supportRequestId?: string;
+    };
     
     // Validate required data
     if (!supportData.brand || !supportData.customerName || !supportData.orderNumber || 
@@ -91,6 +95,14 @@ export async function POST(req: NextRequest) {
     }
     
     const result = await response.json();
+    
+    // Mark support request as WhatsApp sent
+    if (supportRequestId) {
+      await supabase
+        .from('corrin_support_requests')
+        .update({ whatsapp_sent: true })
+        .eq('id', supportRequestId);
+    }
     
     return NextResponse.json({
       success: true,

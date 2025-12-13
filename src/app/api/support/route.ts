@@ -1,10 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import couponsData from '@/data/coupons.json';
+import { supabase } from '@/lib/supabase';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+// Save support request to Supabase
+async function saveSupportRequest(data: {
+  brand: string;
+  customerName: string;
+  orderNumber: string;
+  problem: string;
+  phone: string;
+}): Promise<string | null> {
+  try {
+    const { data: result, error } = await supabase
+      .from('corrin_support_requests')
+      .insert({
+        brand: data.brand,
+        customer_name: data.customerName,
+        order_number: data.orderNumber,
+        problem: data.problem,
+        phone: data.phone,
+        status: 'open',
+        whatsapp_sent: false,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error saving support request:', error);
+      return null;
+    }
+
+    return result.id;
+  } catch (error) {
+    console.error('Error saving support request:', error);
+    return null;
+  }
+}
+
+// Mark WhatsApp as sent
+async function markWhatsAppSent(id: string): Promise<void> {
+  try {
+    await supabase
+      .from('corrin_support_requests')
+      .update({ whatsapp_sent: true })
+      .eq('id', id);
+  } catch (error) {
+    console.error('Error marking WhatsApp sent:', error);
+  }
+}
 
 // Types
 interface SupportData {
@@ -216,11 +264,21 @@ export async function POST(req: NextRequest) {
       state.step = 'complete';
       const response = await generateSupportResponse('complete', state.data);
       
+      // Save support request to Supabase
+      const supportRequestId = await saveSupportRequest({
+        brand: state.data.brand || '',
+        customerName: state.data.customerName || '',
+        orderNumber: state.data.orderNumber || '',
+        problem: state.data.problemDetails || '',
+        phone: state.data.customerPhone || '',
+      });
+      
       return NextResponse.json({
         response,
         supportState: state,
         action: 'send_whatsapp',
-        supportData: state.data
+        supportData: state.data,
+        supportRequestId
       });
     }
     

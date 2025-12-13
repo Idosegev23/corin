@@ -1,12 +1,72 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { recipes, products, couponCodes } from '@/data/corrin-data';
+import { supabase } from '@/lib/supabase';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 const ASSISTANT_ID = process.env.OPENAI_ASSISTANT_ID!;
+
+// Helper to save chat data to Supabase
+async function saveToSupabase(
+  sessionId: string | null,
+  userMessage: string,
+  assistantResponse: string
+): Promise<string | null> {
+  try {
+    let currentSessionId = sessionId;
+
+    // Create session if not exists
+    if (!currentSessionId) {
+      const { data: session, error: sessionError } = await supabase
+        .from('corrin_chat_sessions')
+        .insert({})
+        .select()
+        .single();
+
+      if (sessionError) {
+        console.error('Error creating session:', sessionError);
+        return null;
+      }
+      currentSessionId = session.id;
+    }
+
+    // Save user message
+    await supabase.from('corrin_chat_messages').insert({
+      session_id: currentSessionId,
+      role: 'user',
+      content: userMessage,
+    });
+
+    // Save assistant response
+    await supabase.from('corrin_chat_messages').insert({
+      session_id: currentSessionId,
+      role: 'assistant',
+      content: assistantResponse,
+    });
+
+    // Update session message count
+    const { data: messages } = await supabase
+      .from('corrin_chat_messages')
+      .select('id')
+      .eq('session_id', currentSessionId);
+
+    await supabase
+      .from('corrin_chat_sessions')
+      .update({
+        message_count: messages?.length || 0,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', currentSessionId);
+
+    return currentSessionId;
+  } catch (error) {
+    console.error('Error saving to Supabase:', error);
+    return null;
+  }
+}
 
 // Build context with all data
 function buildContext() {
@@ -36,7 +96,7 @@ ${productsContext}
 
 export async function POST(req: NextRequest) {
   try {
-    const { message, threadId } = await req.json();
+    const { message, threadId, sessionId } = await req.json();
 
     // Create a new thread if one doesn't exist
     let currentThreadId: string;
@@ -121,9 +181,13 @@ export async function POST(req: NextRequest) {
       responseText = lastMessage.content[0].text.value;
     }
 
+    // Save to Supabase (non-blocking)
+    const newSessionId = await saveToSupabase(sessionId || null, message, responseText);
+
     return NextResponse.json({
       response: responseText,
       threadId: currentThreadId,
+      sessionId: newSessionId || sessionId,
     });
   } catch (error) {
     console.error('Chat API error:', error);
