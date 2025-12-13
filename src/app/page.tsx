@@ -6,11 +6,27 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { products, posts, categories, couponCodes, recipes, Recipe } from '@/data/corrin-data';
 import { Marquee } from '@/components/Marquee';
+import { BrandCards } from '@/components/BrandCards';
+import { SupportForm } from '@/components/SupportForm';
 
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  action?: 'show_brands' | 'collect_input' | 'complete';
+  brands?: Array<{ brand: string; product: string; code: string }>;
+  inputType?: 'name' | 'order' | 'problem' | 'phone';
+}
+
+interface SupportState {
+  step: 'detect' | 'brand' | 'name' | 'order' | 'problem' | 'phone' | 'complete';
+  data: {
+    brand?: string;
+    customerName?: string;
+    orderNumber?: string;
+    problemDetails?: string;
+    customerPhone?: string;
+  };
 }
 
 // Recipe Modal Component
@@ -164,6 +180,7 @@ export default function Home() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [avatarSrc, setAvatarSrc] = useState(CORRIN_AVATAR);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [supportState, setSupportState] = useState<SupportState | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -178,6 +195,7 @@ export default function Home() {
     setMessages([]);
     setThreadId(null);
     setInputValue('');
+    setSupportState(null);
   };
 
   const scrollToBottom = () => {
@@ -187,6 +205,66 @@ export default function Home() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Handle support flow input (from form or brand selection)
+  const handleSupportInput = async (value: string) => {
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: value,
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: value,
+          supportState,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.supportState) {
+        setSupportState(data.supportState);
+      }
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: data.response,
+        action: data.action,
+        brands: data.brands,
+        inputType: data.inputType,
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      // If complete, send WhatsApp message
+      if (data.action === 'send_whatsapp' && data.supportData) {
+        await fetch('/api/whatsapp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ supportData: data.supportData }),
+        });
+        // Reset support state after sending
+        setSupportState(null);
+      }
+    } catch (error) {
+      console.error('Support error:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'אופס! משהו השתבש. נסי שוב בבקשה.',
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
@@ -198,15 +276,55 @@ export default function Home() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const messageContent = inputValue.trim();
     setInputValue('');
     setIsLoading(true);
 
     try {
+      // If already in support mode, continue support flow
+      if (supportState && supportState.step !== 'detect') {
+        await handleSupportInput(messageContent);
+        return;
+      }
+
+      // Check for support intent first
+      const supportResponse = await fetch('/api/support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: messageContent,
+          supportState: { step: 'detect', data: {} },
+        }),
+      });
+
+      const supportData = await supportResponse.json();
+
+      // If it's a support request, handle it
+      if (supportData.action !== 'use_assistant') {
+        if (supportData.supportState) {
+          setSupportState(supportData.supportState);
+        }
+
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: supportData.response,
+          action: supportData.action,
+          brands: supportData.brands,
+          inputType: supportData.inputType,
+        };
+
+        setMessages((prev) => [...prev, assistantMessage]);
+        setIsLoading(false);
+        return;
+      }
+
+      // Otherwise, use the regular assistant
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: userMessage.content,
+          message: messageContent,
           threadId,
         }),
       });
@@ -471,59 +589,81 @@ export default function Home() {
                   </div>
                 ) : (
                   <>
-                    {messages.map((msg) => (
-                      <div
-                        key={msg.id}
-                        className={`flex ${msg.role === 'user' ? 'justify-start' : 'justify-end'}`}
-                      >
+                    {messages.map((msg, index) => (
+                      <div key={msg.id}>
                         <div
-                          className={`max-w-[85%] px-4 py-3 ${
-                            msg.role === 'user'
-                              ? 'chat-bubble-user'
-                              : 'chat-bubble-assistant'
-                          }`}
+                          className={`flex ${msg.role === 'user' ? 'justify-start' : 'justify-end'}`}
                         >
-                          {msg.role === 'user' ? (
-                            <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                          ) : (
-                            <div className="text-sm markdown-content">
-                              <ReactMarkdown
-                                components={{
-                                  a: ({ href, children }) => (
-                                    <a
-                                      href={href}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-[var(--accent)] hover:underline"
-                                    >
-                                      {children}
-                                    </a>
-                                  ),
-                                  strong: ({ children }) => (
-                                    <strong className="font-semibold">{children}</strong>
-                                  ),
-                                  p: ({ children }) => (
-                                    <p className="mb-2 last:mb-0">{children}</p>
-                                  ),
-                                  ul: ({ children }) => (
-                                    <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>
-                                  ),
-                                  ol: ({ children }) => (
-                                    <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>
-                                  ),
-                                  li: ({ children }) => <li className="text-sm">{children}</li>,
-                                  code: ({ children }) => (
-                                    <code className="px-1.5 py-0.5 rounded text-sm bg-gray-100 font-mono">
-                                      {children}
-                                    </code>
-                                  ),
-                                }}
-                              >
-                                {msg.content}
-                              </ReactMarkdown>
-                            </div>
-                          )}
+                          <div
+                            className={`max-w-[85%] px-4 py-3 ${
+                              msg.role === 'user'
+                                ? 'chat-bubble-user'
+                                : 'chat-bubble-assistant'
+                            }`}
+                          >
+                            {msg.role === 'user' ? (
+                              <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                            ) : (
+                              <div className="text-sm markdown-content">
+                                <ReactMarkdown
+                                  components={{
+                                    a: ({ href, children }) => (
+                                      <a
+                                        href={href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[var(--accent)] hover:underline"
+                                      >
+                                        {children}
+                                      </a>
+                                    ),
+                                    strong: ({ children }) => (
+                                      <strong className="font-semibold">{children}</strong>
+                                    ),
+                                    p: ({ children }) => (
+                                      <p className="mb-2 last:mb-0">{children}</p>
+                                    ),
+                                    ul: ({ children }) => (
+                                      <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>
+                                    ),
+                                    ol: ({ children }) => (
+                                      <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>
+                                    ),
+                                    li: ({ children }) => <li className="text-sm">{children}</li>,
+                                    code: ({ children }) => (
+                                      <code className="px-1.5 py-0.5 rounded text-sm bg-gray-100 font-mono">
+                                        {children}
+                                      </code>
+                                    ),
+                                  }}
+                                >
+                                  {msg.content}
+                                </ReactMarkdown>
+                              </div>
+                            )}
+                          </div>
                         </div>
+                        
+                        {/* Show Brand Cards after assistant message with show_brands action */}
+                        {msg.role === 'assistant' && msg.action === 'show_brands' && msg.brands && index === messages.length - 1 && !isLoading && (
+                          <div className="mt-4">
+                            <BrandCards
+                              brands={msg.brands}
+                              onSelect={(brand) => handleSupportInput(brand)}
+                            />
+                          </div>
+                        )}
+                        
+                        {/* Show Support Form after assistant message with collect_input action */}
+                        {msg.role === 'assistant' && msg.action === 'collect_input' && msg.inputType && index === messages.length - 1 && !isLoading && (
+                          <div className="mt-4">
+                            <SupportForm
+                              inputType={msg.inputType}
+                              onSubmit={(value) => handleSupportInput(value)}
+                              isLoading={isLoading}
+                            />
+                          </div>
+                        )}
                       </div>
                     ))}
                     {isLoading && (

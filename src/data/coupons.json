@@ -1,0 +1,70 @@
+{
+  "coupons": [
+    {
+      "code": "CORRINSONI",
+      "brand": "Philips Sonicare",
+      "product": "הלבנת שיניים",
+      "category": "טכנולוגיה",
+      "link": "https://cpb.co.il/philips-sonicare/",
+      "shortLink": "https://linkg.pt/s/vs79l2vo"
+    },
+    {
+      "code": "corrin9900",
+      "brand": "Philips Lumea",
+      "product": "IPL 9900 - הסרת שיער",
+      "category": "טכנולוגיה",
+      "link": "https://cpb.co.il/product/philips-lumea-ipl-9900-series/",
+      "shortLink": "https://linkg.pt/s/n38hegy5"
+    },
+    {
+      "code": "corrin20",
+      "brand": "BOBOT",
+      "product": "MegaPro - מיקסר",
+      "category": "בית",
+      "link": "https://bobot-israel.com/",
+      "shortLink": "https://linkg.pt/s/8b46gnmh"
+    },
+    {
+      "code": "CG10",
+      "brand": "Papa Johns",
+      "product": "פיצה",
+      "category": "אוכל",
+      "link": "https://www.papajohns.co.il/shop/",
+      "shortLink": "https://linkg.pt/s/d7rsc8jo"
+    },
+    {
+      "code": "CORRIN20",
+      "brand": "Ergobaby",
+      "product": "כיסא אוכל לתינוקות",
+      "category": "תינוקות",
+      "link": "https://cpb.co.il/product-category/ergobaby/",
+      "shortLink": "https://linkg.pt/s/l5rkxw2a"
+    },
+    {
+      "code": "CORRIN60",
+      "brand": "Wolt",
+      "product": "משלוחים",
+      "category": "שירותים",
+      "link": "https://wolt.com/",
+      "shortLink": ""
+    },
+    {
+      "code": "CORRING10",
+      "brand": "אופטיקנה",
+      "product": "משקפיים",
+      "category": "אופטיקה",
+      "link": "https://www.opticana.co.il/",
+      "shortLink": ""
+    },
+    {
+      "code": "WELLA25",
+      "brand": "Wella",
+      "product": "מוצרי שיער",
+      "category": "טיפוח",
+      "link": "",
+      "shortLink": ""
+    }
+  ],
+  "total": 8,
+  "lastUpdated": "2025-12-13"
+}
