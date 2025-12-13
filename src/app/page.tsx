@@ -584,7 +584,7 @@ export default function Home() {
                     <div className="w-full mt-6">
                       <p className="text-xs text-gray-400 mb-3 text-center">מוצרים מומלצים</p>
                       <div className="relative">
-                        <Marquee pauseOnHover className="[--duration:25s]">
+                        <Marquee pauseOnHover className="[--duration:30s]">
                           {products.map((product) => (
                             <a
                               key={product.id}
