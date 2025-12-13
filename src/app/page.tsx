@@ -158,12 +158,12 @@ export default function Home() {
       <header className="sticky top-0 z-50 glass px-4 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-white border border-[var(--border)] shadow-sm">
+            <div className="w-12 h-12 flex items-center justify-center flex-shrink-0 bg-white border border-[var(--border)] shadow-sm" style={{ borderRadius: '16px 0 16px 16px' }}>
               <span className="text-xl font-bold" style={{ color: '#F77F3F' }}>C</span>
             </div>
             <div>
-              <h1 className="font-bold text-xl text-gray-800">Corrin Gideon</h1>
-              <p className="text-sm text-gray-500">העוזרת האישית שלך</p>
+              <h1 className="font-bold text-xl text-gray-800">העוזרת של קורין</h1>
+              <p className="text-sm text-gray-500">צ׳אט תומך למוצרים, קופונים ומתכונים</p>
             </div>
           </div>
           <div className="flex gap-2 bg-white rounded-full p-1.5 shadow-sm border border-[var(--border)]">
@@ -204,48 +204,6 @@ export default function Home() {
             >
               {/* Chat Messages */}
               <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
-                {/* Marquee module inside the main chat window (professional, always visible) */}
-                <div className="marquee-shell rounded-2xl p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-semibold text-gray-800">מוצרים חמים</p>
-                    <button
-                      onClick={() => {
-                        setActiveTab('search');
-                        setSelectedCategory('all');
-                        setSearchQuery('');
-                      }}
-                      className="text-sm text-gray-600 hover:text-gray-800 underline underline-offset-2"
-                      type="button"
-                    >
-                      לכל המוצרים
-                    </button>
-                  </div>
-                  <SeamlessMarquee durationSec={26} className="py-1">
-                    {products.map((product) => (
-                      <a
-                        key={product.id}
-                        href={product.shortLink || product.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="marquee-item flex items-center gap-3 px-4 py-2 rounded-full whitespace-nowrap"
-                      >
-                        <span className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-[var(--border)] bg-[var(--surface-2)]">
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-full h-full object-cover block"
-                          />
-                        </span>
-                        <span className="text-sm font-medium text-gray-800">{product.name}</span>
-                        {product.couponCode && (
-                          <span className="text-xs text-white px-2.5 py-1 rounded-full font-semibold" style={{ background: '#F77F3F' }}>
-                            {product.couponCode}
-                          </span>
-                        )}
-                      </a>
-                    ))}
-                  </SeamlessMarquee>
-                </div>
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center text-center px-4">
                     <motion.div
@@ -257,13 +215,13 @@ export default function Home() {
                       <Sparkles className="w-12 h-12" style={{ color: '#F77F3F' }} />
                     </motion.div>
                     
-                    <h2 className="text-2xl font-bold mb-3 text-gray-800">היי! אני קורין</h2>
-                    <p className="text-gray-500 mb-8 max-w-sm text-lg">
-                      שאלי אותי הכל על המוצרים שלי, קודי קופון, מתכונים ומה שתרצי!
+                    <h2 className="text-2xl font-bold mb-3 text-gray-800">היי, איך אפשר לעזור?</h2>
+                    <p className="text-gray-500 mb-6 max-w-sm text-base">
+                      שאלו על מוצרים, קודי קופון או מתכונים — ואני אחפש לכם תשובה.
                     </p>
                     
-                    {/* Entry points (recipes + coupons) */}
-                    <div className="w-full max-w-lg grid grid-cols-2 gap-3 mb-6">
+                    {/* Minimal entry points (not marketing-heavy) */}
+                    <div className="w-full max-w-lg grid grid-cols-2 gap-3 mb-5">
                       <button
                         type="button"
                         onClick={() => {
@@ -271,14 +229,14 @@ export default function Home() {
                           setSelectedCategory('recipes');
                           setSearchQuery('מתכון');
                         }}
-                        className="product-card rounded-2xl p-4 text-right"
-                        style={{ background: 'var(--tint-2)' }}
+                        className="product-card p-4 text-right"
+                        style={{ background: 'var(--tint-2)', borderRadius: '18px 0 18px 0' }}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <p className="font-semibold text-gray-900">מתכונים</p>
                           <ChefHat className="w-5 h-5 text-[#F77F3F]" />
                         </div>
-                        <p className="text-sm text-gray-600">גלי מתכונים מהפוסטים – מסודר ונוח.</p>
+                        <p className="text-sm text-gray-600">גישה מהירה למתכונים.</p>
                       </button>
                       <button
                         type="button"
@@ -287,19 +245,20 @@ export default function Home() {
                           setSelectedCategory('all');
                           setSearchQuery('קופון');
                         }}
-                        className="product-card rounded-2xl p-4 text-right"
-                        style={{ background: 'var(--tint-1)' }}
+                        className="product-card p-4 text-right"
+                        style={{ background: 'var(--tint-1)', borderRadius: '18px 0 18px 0' }}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <p className="font-semibold text-gray-900">קודי קופון</p>
                           <span className="text-lg">🎫</span>
                         </div>
-                        <p className="text-sm text-gray-600">כל הקודים במקום אחד, העתקה בלחיצה.</p>
+                        <p className="text-sm text-gray-600">גישה מהירה לקופונים.</p>
                       </button>
                     </div>
 
+                    {/* Fewer suggestions to reduce clutter */}
                     <div className="flex flex-wrap gap-2 justify-center max-w-lg">
-                      {suggestedQuestions.map((q, i) => (
+                      {suggestedQuestions.slice(0, 3).map((q, i) => (
                         <motion.button
                           key={i}
                           initial={{ opacity: 0, y: 10 }}
@@ -309,7 +268,8 @@ export default function Home() {
                             setInputValue(q);
                             inputRef.current?.focus();
                           }}
-                          className="px-4 py-2 text-sm rounded-full border border-[var(--border)] bg-white text-gray-700 hover:bg-[var(--surface-2)] transition-all"
+                          className="px-4 py-2 text-sm border border-[var(--border)] bg-white text-gray-700 hover:bg-[var(--surface-2)] transition-all"
+                          style={{ borderRadius: '14px 0 14px 0' }}
                         >
                           {q}
                         </motion.button>

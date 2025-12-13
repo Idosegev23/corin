@@ -98,14 +98,14 @@ body {
 /* Chat bubble */
 .chat-bubble-user {
   background: var(--primary);
-  border-radius: 20px 20px 4px 20px;
+  border-radius: 18px 0 18px 18px; /* leaf-ish: sharp top-right */
   color: white;
   box-shadow: 0 10px 24px rgba(247, 127, 63, 0.18);
 }
 
 .chat-bubble-assistant {
   background: var(--surface);
-  border-radius: 20px 20px 20px 4px;
+  border-radius: 18px 18px 18px 0; /* leaf-ish: sharp bottom-left */
   border: 1px solid var(--border);
   color: var(--text-primary);
   box-shadow: 0 10px 24px rgba(17, 24, 39, 0.06);
@@ -180,6 +180,7 @@ body {
   border: 1px solid var(--border);
   color: var(--text-primary);
   transition: all 0.3s ease;
+  border-radius: 14px 0 14px 0; /* leaf */
 }
 
 .category-pill:hover {
@@ -287,12 +288,14 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   box-shadow: 0 10px 24px rgba(17, 24, 39, 0.05);
+  border-radius: 18px 0 18px 0; /* leaf */
 }
 
 .marquee-item {
   background: var(--surface);
   border: 1px solid var(--border);
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  border-radius: 999px; /* keep items pill for readability in marquee */
 }
 
 .marquee-item:hover {
