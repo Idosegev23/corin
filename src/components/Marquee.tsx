@@ -28,12 +28,15 @@ export function Marquee({
     <div
       {...props}
       className={cn(
-        'group flex overflow-hidden p-2',
-        !vertical && 'flex-row gap-4',
-        vertical && 'flex-col gap-4',
+        'group flex overflow-hidden',
+        !vertical && 'flex-row',
+        vertical && 'flex-col',
         className
       )}
-      style={{ '--duration': '30s', '--gap': '1rem' } as React.CSSProperties}
+      style={{ 
+        '--duration': '40s', 
+        '--gap': '1rem' 
+      } as React.CSSProperties}
     >
       {Array(repeat)
         .fill(0)
@@ -41,12 +44,17 @@ export function Marquee({
           <div
             key={i}
             className={cn(
-              'flex shrink-0 justify-around gap-4',
-              !vertical && 'animate-marquee flex-row',
-              vertical && 'animate-marquee-vertical flex-col',
+              'flex shrink-0 gap-4',
+              !vertical && 'flex-row',
+              vertical && 'flex-col',
               pauseOnHover && 'group-hover:[animation-play-state:paused]',
               reverse && '[animation-direction:reverse]'
             )}
+            style={{
+              animation: vertical 
+                ? 'marquee-vertical var(--duration) linear infinite' 
+                : 'marquee var(--duration) linear infinite'
+            }}
           >
             {children}
           </div>

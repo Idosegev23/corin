@@ -335,10 +335,10 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="h-full flex flex-col"
+              className="h-full flex flex-col relative"
             >
               {/* Chat Messages */}
-              <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+              <div className="flex-1 overflow-y-auto px-4 py-6 pb-24 space-y-4">
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center text-center px-4 pt-12">
                     <div className="w-16 h-16 overflow-hidden rounded-2xl mb-5">
@@ -519,8 +519,8 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Chat Input */}
-              <div className="p-4 border-t border-gray-100">
+              {/* Chat Input - Fixed at bottom */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100">
                 <div className="max-w-2xl mx-auto flex gap-3">
                   <input
                     ref={inputRef}
