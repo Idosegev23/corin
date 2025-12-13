@@ -1,63 +1,55 @@
 'use client';
 
-import { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { ComponentPropsWithoutRef } from 'react';
 
-interface MarqueeProps {
-  children: React.ReactNode;
+interface MarqueeProps extends ComponentPropsWithoutRef<'div'> {
   className?: string;
   reverse?: boolean;
   pauseOnHover?: boolean;
-  duration?: number;
+  children: React.ReactNode;
+  vertical?: boolean;
+  repeat?: number;
 }
 
 export function Marquee({
-  children,
-  className = '',
+  className,
   reverse = false,
-  pauseOnHover = true,
-  duration = 40,
+  pauseOnHover = false,
+  children,
+  vertical = false,
+  repeat = 4,
+  ...props
 }: MarqueeProps) {
-  const [isPaused, setIsPaused] = useState(false);
-
   return (
     <div
-      className={`overflow-hidden ${className}`}
-      onMouseEnter={() => pauseOnHover && setIsPaused(true)}
-      onMouseLeave={() => pauseOnHover && setIsPaused(false)}
+      {...props}
+      className={cn(
+        'group flex overflow-hidden p-2 [--duration:40s] [--gap:1rem]',
+        {
+          'flex-row': !vertical,
+          'flex-col': vertical,
+        },
+        className
+      )}
+      style={{ gap: 'var(--gap)' }}
     >
-      <div
-        className="flex w-max"
-        style={{
-          animation: `marquee-seamless ${duration}s linear infinite`,
-          animationDirection: reverse ? 'reverse' : 'normal',
-          animationPlayState: isPaused ? 'paused' : 'running',
-          willChange: 'transform',
-          backfaceVisibility: 'hidden',
-        }}
-      >
-        {/* First set */}
-        <div className="flex shrink-0 gap-3">
-          {children}
-        </div>
-        {/* Second set */}
-        <div className="flex shrink-0 gap-3">
-          {children}
-        </div>
-        {/* Third set */}
-        <div className="flex shrink-0 gap-3">
-          {children}
-        </div>
-      </div>
-      <style jsx global>{`
-        @keyframes marquee-seamless {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-33.333%);
-          }
-        }
-      `}</style>
+      {Array(repeat)
+        .fill(0)
+        .map((_, i) => (
+          <div
+            key={i}
+            className={cn('flex shrink-0 justify-around', {
+              'animate-marquee flex-row': !vertical,
+              'animate-marquee-vertical flex-col': vertical,
+              'group-hover:[animation-play-state:paused]': pauseOnHover,
+              '[animation-direction:reverse]': reverse,
+            })}
+            style={{ gap: 'var(--gap)' }}
+          >
+            {children}
+          </div>
+        ))}
     </div>
   );
 }
