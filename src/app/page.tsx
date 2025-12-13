@@ -252,9 +252,10 @@ export default function Home() {
   });
 
   const suggestedQuestions = [
-    'מה קוד הקופון לפאפא ג\'ונס?',
-    'מה המוצרים הכי פופולריים?',
-    'תני לי מתכון טעים',
+    'מה קוד הקופון הכי שווה עכשיו?',
+    'יש לי שאלה על מתכון הפיצה',
+    'אין לי ביצים, מה אפשר לשים במקום?',
+    'תמליצי על מתכון מהיר לארוחת ערב',
   ];
 
   const openInstagramPost = (url: string) => {
@@ -335,10 +336,33 @@ export default function Home() {
                       />
                     </div>
 
-                    <h2 className="text-xl font-semibold mb-2 text-gray-900">היי, איך אפשר לעזור?</h2>
-                    <p className="text-gray-500 mb-8 max-w-sm text-sm">
-                      שאלו על מוצרים, קודי קופון או מתכונים
+                    <h2 className="text-xl font-semibold mb-2 text-gray-900">היי! אני העוזרת של קורין 👋</h2>
+                    <p className="text-gray-500 mb-6 max-w-sm text-sm leading-relaxed">
+                      אני כאן לעזור לכם עם מתכונים, טיפים לבישול, תחליפים למרכיבים וקודי קופון
                     </p>
+
+                    {/* How to use */}
+                    <div className="w-full max-w-md bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-xl p-4 mb-6">
+                      <p className="font-medium text-gray-900 text-sm mb-3">מה אני יכולה לעשות?</p>
+                      <ul className="text-right text-xs text-gray-600 space-y-2">
+                        <li className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] flex-shrink-0" />
+                          לעזור עם מתכונים - הסברים, טיפים ושיפורים
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] flex-shrink-0" />
+                          להציע תחליפים למרכיבים שאין לכם
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] flex-shrink-0" />
+                          לשתף קודי קופון והמלצות על מוצרים
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] flex-shrink-0" />
+                          לענות על שאלות בנושא בישול ואפייה
+                        </li>
+                      </ul>
+                    </div>
 
                     {/* Quick actions */}
                     <div className="w-full max-w-md grid grid-cols-2 gap-3 mb-6">
@@ -350,8 +374,8 @@ export default function Home() {
                         }}
                         className="p-4 text-right bg-gray-50 hover:bg-gray-100 transition-colors leaf-tr border border-gray-100"
                       >
-                        <p className="font-medium text-gray-900 text-sm">מתכונים</p>
-                        <p className="text-xs text-gray-500 mt-1">גישה מהירה</p>
+                        <p className="font-medium text-gray-900 text-sm">צפייה במתכונים</p>
+                        <p className="text-xs text-gray-500 mt-1">כל המתכונים של קורין</p>
                       </button>
                       <button
                         type="button"
@@ -362,9 +386,11 @@ export default function Home() {
                         className="p-4 text-right bg-gray-50 hover:bg-gray-100 transition-colors leaf-tr border border-gray-100"
                       >
                         <p className="font-medium text-gray-900 text-sm">קודי קופון</p>
-                        <p className="text-xs text-gray-500 mt-1">גישה מהירה</p>
+                        <p className="text-xs text-gray-500 mt-1">הנחות ומבצעים</p>
                       </button>
                     </div>
+
+                    <p className="text-xs text-gray-400 mb-3">נסו לשאול:</p>
 
                     {/* Suggestions */}
                     <div className="flex flex-wrap gap-2 justify-center max-w-md">
