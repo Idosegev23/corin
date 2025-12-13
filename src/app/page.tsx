@@ -4,12 +4,105 @@ import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
-import { products, posts, categories, couponCodes, recipes } from '@/data/corrin-data';
+import { products, posts, categories, couponCodes, recipes, Recipe } from '@/data/corrin-data';
 
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+}
+
+// Recipe Modal Component
+function RecipeModal({ 
+  recipe, 
+  onClose,
+  onAskAssistant 
+}: { 
+  recipe: Recipe; 
+  onClose: () => void;
+  onAskAssistant: (question: string) => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <motion.div
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 100 }}
+        className="relative w-full max-w-lg max-h-[90vh] bg-white rounded-t-3xl sm:rounded-2xl overflow-hidden shadow-2xl"
+      >
+        {/* Image */}
+        <div className="relative h-48 sm:h-56">
+          <Image
+            src={`/instagram/${recipe.shortcode}.jpg`}
+            alt={recipe.name}
+            fill
+            className="object-cover"
+          />
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-gray-700 hover:bg-white transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-5 overflow-y-auto max-h-[calc(90vh-14rem)]">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">{recipe.name}</h2>
+          <p className="text-sm text-gray-600 mb-5">{recipe.description}</p>
+
+          {/* Ingredients */}
+          <div className="mb-5">
+            <h3 className="font-semibold text-gray-900 mb-3">מצרכים</h3>
+            <ul className="space-y-2">
+              {recipe.ingredients.map((ing, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] mt-2 flex-shrink-0" />
+                  {ing}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Instructions */}
+          <div className="mb-5">
+            <h3 className="font-semibold text-gray-900 mb-3">אופן ההכנה</h3>
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+              {recipe.instructions}
+            </p>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-3 border-t border-gray-100">
+            <button
+              onClick={() => {
+                onAskAssistant(`יש לי שאלה על המתכון "${recipe.name}"`);
+                onClose();
+              }}
+              className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl text-sm font-medium transition-colors"
+            >
+              שאלה על המתכון
+            </button>
+            <a
+              href={recipe.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 py-3 px-4 btn-primary rounded-xl text-sm font-medium text-center"
+            >
+              צפייה באינסטגרם
+            </a>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
 }
 
 // Instagram profile avatar via unavatar.io
@@ -70,8 +163,16 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [avatarSrc, setAvatarSrc] = useState(CORRIN_AVATAR);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Ask assistant about something
+  const askAssistant = (question: string) => {
+    setActiveTab('chat');
+    setInputValue(question);
+    setTimeout(() => inputRef.current?.focus(), 100);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -447,13 +548,11 @@ export default function Home() {
                     <section>
                       <h3 className="text-lg font-semibold mb-4 text-gray-900">מתכונים</h3>
                       <div className="space-y-3">
-                        {recipes.slice(0, 4).map((recipe) => (
-                          <a
+                        {recipes.map((recipe) => (
+                          <button
                             key={recipe.id}
-                            href={recipe.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex gap-4 p-3 bg-gray-50 hover:bg-gray-100 transition-colors leaf-tr"
+                            onClick={() => setSelectedRecipe(recipe)}
+                            className="w-full flex gap-4 p-3 bg-gray-50 hover:bg-gray-100 transition-colors leaf-tr text-right"
                           >
                             <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200">
                               <InstagramImage
@@ -467,9 +566,9 @@ export default function Home() {
                             <div className="flex-1 min-w-0">
                               <h4 className="font-medium text-sm text-gray-900">{recipe.name}</h4>
                               <p className="text-xs text-gray-500 mt-1 line-clamp-2">{recipe.description}</p>
-                              <span className="text-xs text-[var(--accent)] mt-2 inline-block">לצפייה במתכון →</span>
+                              <span className="text-xs text-[var(--accent)] mt-2 inline-block">לצפייה במתכון המלא →</span>
                             </div>
-                          </a>
+                          </button>
                         ))}
                       </div>
                     </section>
@@ -548,6 +647,17 @@ export default function Home() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Recipe Modal */}
+      <AnimatePresence>
+        {selectedRecipe && (
+          <RecipeModal
+            recipe={selectedRecipe}
+            onClose={() => setSelectedRecipe(null)}
+            onAskAssistant={askAssistant}
+          />
+        )}
+      </AnimatePresence>
     </main>
   );
 }
