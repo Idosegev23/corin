@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface MarqueeProps {
@@ -15,34 +16,36 @@ export function Marquee({
   pauseOnHover = true,
   children,
 }: MarqueeProps) {
+  const [isPaused, setIsPaused] = useState(false);
+  
   return (
     <div
-      className={cn(
-        'group flex overflow-hidden p-2 [--duration:40s] [--gap:0.75rem]',
-        className
-      )}
+      className={cn('flex overflow-hidden', className)}
+      onMouseEnter={() => pauseOnHover && setIsPaused(true)}
+      onMouseLeave={() => pauseOnHover && setIsPaused(false)}
     >
       <div
-        className={cn(
-          'flex shrink-0 animate-marquee-seamless flex-row',
-          reverse && 'animate-marquee-seamless-reverse',
-          pauseOnHover && 'group-hover:[animation-play-state:paused]'
-        )}
+        className="flex shrink-0 flex-row"
         style={{
           width: 'max-content',
-          gap: 'var(--gap)',
+          gap: '12px',
+          animation: `marquee-seamless var(--duration, 40s) linear infinite`,
+          animationDirection: reverse ? 'reverse' : 'normal',
+          animationPlayState: isPaused ? 'paused' : 'running',
+          willChange: 'transform',
+          backfaceVisibility: 'hidden',
         }}
       >
         {/* First set */}
-        <div className="flex shrink-0 gap-3">
+        <div className="flex shrink-0" style={{ gap: '12px' }}>
           {children}
         </div>
         {/* Second set */}
-        <div className="flex shrink-0 gap-3">
+        <div className="flex shrink-0" style={{ gap: '12px' }}>
           {children}
         </div>
         {/* Third set */}
-        <div className="flex shrink-0 gap-3">
+        <div className="flex shrink-0" style={{ gap: '12px' }}>
           {children}
         </div>
       </div>
