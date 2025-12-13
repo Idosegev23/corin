@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { products, posts, categories, couponCodes, recipes, Recipe } from '@/data/corrin-data';
-import Marquee from 'react-fast-marquee';
 import { BrandCards } from '@/components/BrandCards';
 import { SupportForm } from '@/components/SupportForm';
 
@@ -580,21 +579,26 @@ export default function Home() {
                       ))}
                     </div>
 
-                    {/* Products Marquee */}
+                    {/* Products Scroll */}
                     <div className="w-full mt-6">
                       <p className="text-xs text-gray-400 mb-3 text-center">מוצרים מומלצים</p>
                       <div className="relative">
-                        <Marquee autoFill pauseOnHover speed={40} direction="right" className="py-2">
+                        {/* Fade edges */}
+                        <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white to-transparent z-10" />
+                        <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent z-10" />
+                        
+                        {/* Scrollable container */}
+                        <div className="flex gap-3 overflow-x-auto pb-3 px-4 scrollbar-hide snap-x snap-mandatory">
                           {products.map((product) => (
                             <a
                               key={product.id}
                               href={product.shortLink || product.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-block w-36 mx-2 bg-white border border-gray-100 rounded-xl hover:border-indigo-300 hover:shadow-lg transition-all overflow-hidden group"
+                              className="snap-start flex-shrink-0 w-32 bg-white border border-gray-100 rounded-xl hover:border-indigo-300 hover:shadow-lg transition-all overflow-hidden group"
                             >
                               {/* Product Image */}
-                              <div className="w-full h-24 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center overflow-hidden">
+                              <div className="w-full h-20 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center overflow-hidden">
                                 {product.image ? (
                                   <img
                                     src={product.image}
@@ -605,29 +609,27 @@ export default function Home() {
                                       target.style.display = 'none';
                                       const parent = target.parentElement;
                                       if (parent) {
-                                        parent.innerHTML = `<span class="text-2xl font-bold text-gray-300">${product.brand.charAt(0)}</span>`;
+                                        parent.innerHTML = `<span class="text-xl font-bold text-gray-300">${product.brand.charAt(0)}</span>`;
                                       }
                                     }}
                                   />
                                 ) : (
-                                  <span className="text-2xl font-bold text-gray-300">{product.brand.charAt(0)}</span>
+                                  <span className="text-xl font-bold text-gray-300">{product.brand.charAt(0)}</span>
                                 )}
                               </div>
                               {/* Product Info */}
-                              <div className="p-3">
-                                <p className="text-[10px] text-gray-400 mb-0.5">{product.brand}</p>
-                                <p className="font-medium text-gray-900 text-xs leading-tight line-clamp-2 min-h-[2rem]">{product.name}</p>
+                              <div className="p-2">
+                                <p className="text-[9px] text-gray-400 mb-0.5">{product.brand}</p>
+                                <p className="font-medium text-gray-900 text-[11px] leading-tight line-clamp-2 min-h-[2rem]">{product.name}</p>
                                 {product.couponCode && (
-                                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-green-50 text-green-700 text-[9px] font-semibold rounded">
+                                  <span className="inline-block mt-1 px-1.5 py-0.5 bg-green-50 text-green-700 text-[8px] font-semibold rounded">
                                     {product.couponCode}
                                   </span>
                                 )}
                               </div>
                             </a>
                           ))}
-                        </Marquee>
-                        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent z-10" />
-                        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent z-10" />
+                        </div>
                       </div>
                     </div>
                   </div>
