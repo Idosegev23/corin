@@ -159,7 +159,7 @@ export default function Home() {
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 flex items-center justify-center flex-shrink-0 bg-white border border-[var(--border)] shadow-sm" style={{ borderRadius: '16px 0 16px 16px' }}>
-              <span className="text-xl font-bold" style={{ color: '#F77F3F' }}>C</span>
+              <span className="text-xl font-bold" style={{ color: 'var(--primary)' }}>C</span>
             </div>
             <div>
               <h1 className="font-bold text-xl text-gray-800">העוזרת של קורין</h1>
@@ -171,7 +171,7 @@ export default function Home() {
               onClick={() => setActiveTab('chat')}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
                 activeTab === 'chat'
-                  ? 'bg-[#F77F3F] text-white shadow-md'
+                  ? 'bg-[var(--primary)] text-white shadow-md'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -181,7 +181,7 @@ export default function Home() {
               onClick={() => setActiveTab('search')}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
                 activeTab === 'search'
-                  ? 'bg-[#F77F3F] text-white shadow-md'
+                  ? 'bg-[var(--primary)] text-white shadow-md'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -212,7 +212,7 @@ export default function Home() {
                       transition={{ type: 'spring', bounce: 0.5 }}
                       className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 animate-pulse-glow bg-white border border-[var(--border)] shadow-sm"
                     >
-                      <Sparkles className="w-12 h-12" style={{ color: '#F77F3F' }} />
+                      <Sparkles className="w-12 h-12" style={{ color: 'var(--primary)' }} />
                     </motion.div>
                     
                     <h2 className="text-2xl font-bold mb-3 text-gray-800">היי, איך אפשר לעזור?</h2>
@@ -234,7 +234,7 @@ export default function Home() {
                       >
                         <div className="flex items-center justify-between mb-2">
                           <p className="font-semibold text-gray-900">מתכונים</p>
-                          <ChefHat className="w-5 h-5 text-[#F77F3F]" />
+                          <ChefHat className="w-5 h-5 text-[var(--primary)]" />
                         </div>
                         <p className="text-sm text-gray-600">גישה מהירה למתכונים.</p>
                       </button>
@@ -304,14 +304,14 @@ export default function Home() {
                                       href={href}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-[#F77F3F] hover:text-[#FF6B35] underline inline-flex items-center gap-1"
+                                      className="text-[var(--primary)] hover:text-[var(--accent)] underline inline-flex items-center gap-1"
                                     >
                                       {children}
                                       <ExternalLink className="w-3 h-3" />
                                     </a>
                                   ),
                                   strong: ({ children }) => (
-                                    <strong className="font-bold text-[#FF6B35]">{children}</strong>
+                                    <strong className="font-bold text-[var(--primary-600)]">{children}</strong>
                                   ),
                                   p: ({ children }) => (
                                     <p className="mb-2 last:mb-0">{children}</p>
@@ -326,7 +326,10 @@ export default function Home() {
                                     <li className="text-sm">{children}</li>
                                   ),
                                   code: ({ children }) => (
-                                    <code className="px-2 py-0.5 rounded font-mono text-[#FF6B35]" style={{ background: '#FFECD2' }}>
+                                    <code
+                                      className="px-2 py-0.5 rounded font-mono text-[var(--primary-600)]"
+                                      style={{ background: 'var(--code-bg)' }}
+                                    >
                                       {children}
                                     </code>
                                   ),
@@ -419,7 +422,7 @@ export default function Home() {
                         onClick={() => setSelectedCategory(cat.id)}
                         className={`px-5 py-3 rounded-full text-base whitespace-nowrap flex items-center gap-2 font-medium transition-all border ${
                           selectedCategory === cat.id 
-                            ? 'bg-[#F77F3F] text-white border-[#F77F3F]' 
+                            ? 'bg-[var(--primary)] text-white border-[var(--primary)]' 
                             : 'bg-white text-gray-700 border-[var(--border)] hover:bg-[var(--surface-2)]'
                         }`}
                       >
@@ -448,7 +451,7 @@ export default function Home() {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleCopyCode(coupon.code)}
-                            className="rounded-2xl p-4 cursor-pointer transition-all border border-transparent hover:border-[#F77F3F]"
+                            className="rounded-2xl p-4 cursor-pointer transition-all border border-transparent hover:border-[var(--primary)]"
                             style={{ background: tints[index % tints.length] }}
                           >
                             <div className="flex items-center justify-between mb-2">
@@ -459,7 +462,7 @@ export default function Home() {
                                 <Copy className="w-5 h-5 text-gray-400" />
                               )}
                             </div>
-                            <p className="font-mono font-bold text-lg text-[#F77F3F]">{coupon.code}</p>
+                            <p className="font-mono font-bold text-lg text-[var(--primary)]">{coupon.code}</p>
                             <p className="text-sm text-gray-600 mt-1">{coupon.description}</p>
                           </motion.div>
                         ))}
@@ -471,7 +474,7 @@ export default function Home() {
                   {(selectedCategory === 'all' || selectedCategory === 'recipes' || searchQuery.includes('מתכון')) && (
                     <div className="mb-8">
                       <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
-                        <ChefHat className="w-6 h-6 text-[#F77F3F]" />
+                        <ChefHat className="w-6 h-6 text-[var(--primary)]" />
                         מתכונים
                       </h3>
                       <div className="space-y-3">
@@ -484,7 +487,7 @@ export default function Home() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className="rounded-2xl overflow-hidden flex gap-4 border border-transparent hover:border-[#F77F3F] transition-all"
+                            className="rounded-2xl overflow-hidden flex gap-4 border border-transparent hover:border-[var(--primary)] transition-all"
                             style={{ background: tints[index % tints.length] }}
                           >
                             <div className="w-28 h-28 flex-shrink-0">
@@ -495,11 +498,11 @@ export default function Home() {
                               />
                             </div>
                             <div className="p-4 flex-1">
-                              <h4 className="font-bold text-base text-[#F77F3F]">{recipe.name}</h4>
+                              <h4 className="font-bold text-base text-[var(--primary)]">{recipe.name}</h4>
                               <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                                 {recipe.description}
                               </p>
-                              <div className="flex items-center gap-1 mt-3 text-sm text-[#F77F3F]">
+                              <div className="flex items-center gap-1 mt-3 text-sm text-[var(--primary)]">
                                 <ExternalLink className="w-4 h-4" />
                                 <span>לצפייה במתכון</span>
                               </div>
@@ -512,7 +515,7 @@ export default function Home() {
 
                   {/* Products */}
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
-                    <ShoppingBag className="w-6 h-6 text-[#F77F3F]" />
+                    <ShoppingBag className="w-6 h-6 text-[var(--primary)]" />
                     מוצרים
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
@@ -536,17 +539,17 @@ export default function Home() {
                           {product.couponCode && (
                             <div 
                               className="absolute top-3 right-3 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md"
-                              style={{ background: '#F77F3F' }}
+                              style={{ background: 'var(--primary)' }}
                             >
                               קופון
                             </div>
                           )}
                         </div>
                         <div className="p-4">
-                          <p className="text-sm text-[#F77F3F] font-medium mb-1">{product.brand}</p>
+                          <p className="text-sm text-[var(--primary)] font-medium mb-1">{product.brand}</p>
                           <h4 className="font-medium text-base line-clamp-2 text-gray-800">{product.name}</h4>
                           {product.couponCode && (
-                            <p className="text-sm text-[#FF6B35] mt-2 font-mono font-bold">
+                            <p className="text-sm text-[var(--primary-600)] mt-2 font-mono font-bold">
                               {product.couponCode}
                             </p>
                           )}
@@ -588,7 +591,7 @@ export default function Home() {
                         {post.brand && (
                           <div 
                             className="absolute top-2 right-2 text-white text-[10px] px-2 py-1 rounded-full font-medium"
-                            style={{ background: '#F77F3F' }}
+                            style={{ background: 'var(--primary)' }}
                           >
                             {post.brand}
                           </div>

@@ -1,23 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #F77F3F;
-  --primary-600: #e66f2f;
+  /* Brand palette (cool + modern, no orange) */
+  --primary: #4f46e5; /* indigo */
+  --primary-600: #4338ca;
+  --primary-rgb: 79 70 229;
+  --accent: #a855f7; /* violet */
+  --code-bg: rgb(var(--primary-rgb) / 0.12);
+
   --text-primary: #111827;
   --text-secondary: #6b7280;
-  --bg: #fafafb;
+  --bg: #f7f8fb;
   --surface: #ffffff;
   --surface-2: #f5f6f8;
   --border: rgba(17, 24, 39, 0.10);
   --shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
 
   /* subtle tints (professional, not “kids pastel blocks”) */
-  --tint-1: #fff7f2;
-  --tint-2: #f6fbff;
-  --tint-3: #f6fff8;
-  --tint-4: #fff7fb;
-  --tint-5: #f8f7ff;
-  --tint-6: #fffbf0;
+  --tint-1: #eef2ff; /* indigo-50 */
+  --tint-2: #ecfeff; /* cyan-50 */
+  --tint-3: #f0fdf4; /* green-50 */
+  --tint-4: #f5f3ff; /* violet-50 */
+  --tint-5: #f1f5f9; /* slate-100 */
+  --tint-6: #eff6ff; /* blue-50 */
 }
 
 * {
@@ -57,8 +62,8 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(247, 127, 63, 0.15); }
-  50% { box-shadow: 0 0 35px rgba(247, 127, 63, 0.3); }
+  0%, 100% { box-shadow: 0 0 20px rgb(var(--primary-rgb) / 0.16); }
+  50% { box-shadow: 0 0 35px rgb(var(--primary-rgb) / 0.32); }
 }
 
 @keyframes slide-up {
@@ -100,7 +105,7 @@ body {
   background: var(--primary);
   border-radius: 18px 0 18px 18px; /* leaf-ish: sharp top-right */
   color: white;
-  box-shadow: 0 10px 24px rgba(247, 127, 63, 0.18);
+  box-shadow: 0 10px 24px rgb(var(--primary-rgb) / 0.20);
 }
 
 .chat-bubble-assistant {
@@ -125,7 +130,7 @@ body {
 }
 
 .chat-bubble-assistant .markdown-content code {
-  background: rgba(247, 127, 63, 0.10);
+  background: var(--code-bg);
   color: var(--primary-600);
 }
 
@@ -139,8 +144,8 @@ body {
 
 .product-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(247, 127, 63, 0.35);
-  box-shadow: 0 18px 44px rgba(247, 127, 63, 0.12);
+  border-color: rgb(var(--primary-rgb) / 0.38);
+  box-shadow: 0 18px 44px rgb(var(--primary-rgb) / 0.14);
 }
 
 /* Search input - Light */
@@ -157,8 +162,8 @@ body {
 
 .search-input:focus {
   background: var(--surface);
-  border-color: rgba(247, 127, 63, 0.55);
-  box-shadow: 0 0 0 4px rgba(247, 127, 63, 0.10);
+  border-color: rgb(var(--primary-rgb) / 0.62);
+  box-shadow: 0 0 0 4px rgb(var(--primary-rgb) / 0.12);
 }
 
 /* Button styles - Solid */
@@ -171,7 +176,7 @@ body {
 .btn-primary:hover {
   background: var(--primary-600);
   transform: scale(1.02);
-  box-shadow: 0 8px 20px rgba(247, 127, 63, 0.25);
+  box-shadow: 0 8px 20px rgb(var(--primary-rgb) / 0.26);
 }
 
 /* Category pill - Light */
@@ -246,7 +251,7 @@ body {
 }
 
 .markdown-content code {
-  background: rgba(247, 127, 63, 0.10);
+  background: var(--code-bg);
   padding: 2px 6px;
   border-radius: 4px;
   font-family: 'Fira Code', monospace;
@@ -300,6 +305,6 @@ body {
 
 .marquee-item:hover {
   transform: translateY(-1px);
-  border-color: rgba(247, 127, 63, 0.35);
+  border-color: rgb(var(--primary-rgb) / 0.38);
   box-shadow: 0 14px 30px rgba(17, 24, 39, 0.10);
 }
